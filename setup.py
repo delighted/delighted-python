@@ -5,14 +5,14 @@ description = 'A CLI client and Python API library for the delighted platform.'
 setup(
     name='delighted',
     packages=['delighted'],
-    version='0.4',
+    version='0.5',
     author='Jason Pearson',
     author_email='jason.d.pearson@gmail.com',
     description=description,
     license='MIT',
     keywords='delighted api',
     url='https://github.com/kaeawc/delighted-python/',
-    download_url='https://github.com/kaeawc/delighted-python/archive/0.4.zip',
+    download_url='https://github.com/kaeawc/delighted-python/archive/0.5.zip',
     py_modules=['delighted'],
     install_requires=['requests >= 0.13.2'],
     classifiers=[
