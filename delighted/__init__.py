@@ -4,7 +4,7 @@ import logging
 import sys
 import time
 
-from errors import DelightedError, API_ERRORS
+from .errors import DelightedError, API_ERRORS
 
 try:
     import ujson as json
@@ -57,9 +57,9 @@ class Delighted(object):
 
         self.apikey = apikey
 
-        from people import People
-        from metrics import Metrics
-        from survey_response import SurveyResponse
+        from .people import People
+        from .metrics import Metrics
+        from .survey_response import SurveyResponse
 
         self.people = People(self)
         self.metrics = Metrics(self)
@@ -167,7 +167,7 @@ class Delighted(object):
 
     def cast_error(self, status_code, result):
         '''Take a result representing an error and cast it to a specific
-        exception if possible (use a generic delighted.DelightedError exception
+        exception if possible (use a generic delighted.errors.DelightedError exception
         for unknown cases)'''
 
         if status_code in API_ERRORS:
