@@ -3,6 +3,11 @@ class DelightedError(Exception):
     pass
 
 
+class APIKeyMissing(DelightedError):
+    """Without an API key this library cannot connect to Delighted."""
+    pass
+
+
 class Unauthorized(DelightedError):
     """401 Indicates the API key was invalid."""
     pass

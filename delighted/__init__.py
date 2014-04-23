@@ -4,7 +4,7 @@ import logging
 import sys
 import time
 
-from .errors import DelightedError, API_ERRORS
+from .errors import DelightedError, APIKeyMissing, API_ERRORS
 
 try:
     import ujson as json
@@ -53,7 +53,7 @@ class Delighted(object):
                 apikey = self.read_configs()
 
         if apikey is None:
-            raise DelightedError('You must provide a Delighted API key')
+            raise APIKeyMissing('You must provide an API key from Delighted')
 
         self.apikey = apikey
 
