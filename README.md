@@ -19,4 +19,4 @@ This can be installed via the [pypi package](https://pypi.python.org/pypi/deligh
 
 ### Run Tests
 
-    $ pytest test
+    $ py.test test
