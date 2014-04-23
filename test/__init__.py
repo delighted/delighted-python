@@ -77,7 +77,7 @@ def score():
 
 @pytest.fixture(scope='module')
 def email():
-    return 'test@example.com' # % uuid.uuid4()
+    return 'test+%s@example.com' % uuid.uuid4()
 
 
 @pytest.fixture(scope='module')

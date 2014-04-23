@@ -1,23 +1,30 @@
-import pytest
 from test import email, delighted
-from datetime import datetime, timedelta
-from time import mktime
 
 
 class TestGetMetrics(object):
 
     def now(self):
+
+        from datetime import datetime
+
         return datetime.now()
 
     def addSeconds(self, date_time, seconds):
+
+        from datetime import timedelta
+
         return date_time + timedelta(seconds=seconds)
 
     def assert_between(self, date_time, start, end):
+
+        from time import mktime
 
         assert (date_time >= mktime(start.timetuple()))
         assert (date_time <= mktime(end.timetuple()))
 
     def test_get_metrics(self, delighted):
+
+        from datetime import timedelta
 
         until = self.now()
 

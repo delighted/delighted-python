@@ -1,15 +1,20 @@
 from test import email, delighted, person, person_with_email, score, comment
 from test import properties, location, operating_system
-from datetime import datetime, timedelta
 from time import mktime
 
 
 class TestCreateSurvey(object):
 
     def now(self):
+
+        from datetime import datetime
+
         return datetime.now()
 
     def addSeconds(self, date_time, seconds):
+
+        from datetime import timedelta
+
         return date_time + timedelta(seconds=seconds)
 
     def test_create_survey_with_properties(
@@ -32,6 +37,10 @@ class TestCreateSurvey(object):
         assert response['person'] == person_id
         assert response['score'] == score
         assert response['created_at'] >= mktime(start.timetuple())
+
+        import time
+
+        time.sleep(1)
 
         responses = delighted.survey_response.get(person_email=person_email)
 
