@@ -15,7 +15,7 @@ setup(
     license='MIT',
     keywords='delighted api',
     url='https://github.com/kaeawc/delighted-python/',
-    download_url='https://github.com/kaeawc/delighted-python/tarball/0.1',
+    download_url='https://github.com/kaeawc/delighted-python/archive/0.1.zip',
     py_modules=['delighted'],
     install_requires=['requests >= 0.13.2', 'docopt == 0.4.0'],
     classifiers=[
