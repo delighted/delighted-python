@@ -12,7 +12,7 @@ setup(
     license='MIT',
     keywords='delighted api',
     url='https://github.com/kaeawc/delighted-python/',
-    download_url='https://github.com/kaeawc/delighted-python/archive/0.1.zip',
+    download_url='https://github.com/kaeawc/delighted-python/archive/0.2.zip',
     py_modules=['delighted'],
     install_requires=['requests >= 0.13.2'],
     classifiers=[
