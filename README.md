@@ -17,10 +17,6 @@ This can be installed via the [pypi package](https://pypi.python.org/pypi/deligh
     >>> delighted.metrics.get()
     {u'passive_count': 4, u'promoter_percent': 40.74074074074074, u'detractor_percent': 51.85185185185185, u'response_count': 54, u'passive_percent': 7.4074074074074066, u'promoter_count': 22, u'detractor_count': 28, u'nps': -11}
 
-### API Key reading
-
-This client will either read the key from the environment or at initialization.
-
 ### Run Tests
 
     $ pytest test
