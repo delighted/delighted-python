@@ -1,4 +1,5 @@
 import requests
+from requests.auth import HTTPBasicAuth
 import os.path
 import logging
 import sys
@@ -65,13 +66,6 @@ class Delighted(object):
         self.metrics = Metrics(self)
         self.survey_response = SurveyResponse(self)
 
-    def get_headers(self):
-        auth = 'Basic YXV0aDpNNjdpV3BlTUgzSlM1WWc2MWVwbWdIQUwxanB2RWtqUw=='
-
-        return {
-            'Authorization': auth
-        }
-
     def get(self, url, params={}):
         '''Actually make the API call with the given params - this should
         only be called by the namespace methods'''
@@ -85,7 +79,7 @@ class Delighted(object):
         r = requests.get(
             url,
             data=params,
-            headers=self.get_headers())
+            auth=HTTPBasicAuth('auth', self.apikey))
 
         return self.get_response(r, url, params, start)
 
@@ -102,7 +96,7 @@ class Delighted(object):
         r = requests.post(
             url,
             data=params,
-            headers=self.get_headers())
+            auth=HTTPBasicAuth('auth', self.apikey))
 
         return self.get_response(r, url, params, start)
 
@@ -119,7 +113,7 @@ class Delighted(object):
         r = requests.delete(
             url,
             data=params,
-            headers=self.get_headers())
+            auth=HTTPBasicAuth('auth', self.apikey))
 
         return self.get_response(r, url, params, start)
 
