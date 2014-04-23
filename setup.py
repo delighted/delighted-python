@@ -1,7 +1,7 @@
 from setuptools import setup
 import os.path
 
-readme = os.path.join(os.path.dirname(__file__), 'README')
+readme = os.path.join(os.path.dirname(__file__), 'README.md')
 description = 'A CLI client and Python API library for the delighted platform.'
 
 setup(
