@@ -1,4 +1,5 @@
-from test import email, delighted
+from test import email, delighted, properties
+from test import location, operating_system, score
 
 
 class TestCreatePerson(object):
@@ -59,6 +60,39 @@ class TestCreatePerson(object):
         assert response['name'] is None
         assert response['properties'] == {}
         assert response['survey_scheduled_at'] is None
+
+    def test_do_not_send_with_properties(
+            self,
+            delighted,
+            email,
+            properties,
+            score):
+
+        response = delighted.people.create(
+            email=email,
+            send=False,
+            name='Test',
+            properties=properties)
+
+        assert response['id']
+        assert response['email'] == email
+        assert response['name'] == 'Test'
+        assert response['properties'] == {}
+        assert response['survey_scheduled_at'] is None
+
+    def test_send_with_properties(self, delighted, email, properties, score):
+
+        response = delighted.people.create(
+            email=email,
+            send=True,
+            name='Test',
+            properties=properties)
+
+        assert response['id']
+        assert response['email'] == email
+        assert response['name'] == 'Test'
+        assert response['properties'] == properties
+        assert response['survey_scheduled_at'] is not None
 
 
 class TestDeletePerson(object):
