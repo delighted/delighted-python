@@ -69,8 +69,14 @@ class People(object):
             'delay': delay,
         }
 
-        # 'name': name,
-        # 'properties': properties,
+        if name is not None:
+            _params['name'] = name
+
+        if properties is not None:
+            for key in properties:
+                key_name = 'properties[%s]' % key
+                value = properties[key]
+                _params[key_name] = value
 
         return self.master.post('people', _params)
 

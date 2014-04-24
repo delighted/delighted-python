@@ -151,7 +151,7 @@ class Delighted(object):
         try:
             json_result = json.loads(response_body)
         except:
-            json_result = {'errors': 'Data Not Found'}
+            json_result = {'errors': response_body}
 
         if status != requests.codes.ok and \
                 status != requests.codes.created:
