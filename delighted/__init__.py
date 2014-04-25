@@ -160,7 +160,7 @@ class Delighted(object):
                 status != requests.codes.created:
 
             err_msg = json_result.get('errors', 'Unknown Error')
-            raise self.cast_error(status, str(err_msg))
+            raise self.cast_error(status, err_msg)
 
         return json_result
 
