@@ -1,6 +1,7 @@
 import pytest
 import uuid
 import random
+import time
 
 
 @pytest.fixture(scope='module')
@@ -63,11 +64,40 @@ def person(delighted):
 
 
 @pytest.fixture(scope='module')
-def person_with_email(delighted, email):
+def person_with_email(delighted):
 
-    created = delighted.people.create(email)
+    random_email = email()
 
-    return {'id': created['id'], 'email': email }
+    created = delighted.people.create(email=random_email)
+
+    return {'id': created['id'], 'email': random_email}
+
+
+@pytest.fixture(scope='module')
+def person_has_responded(delighted):
+
+    person_email = email()
+    random_score = score()
+    random_properties = {
+        'location': location(),
+        'operating_system': operating_system(),
+    }
+
+    created = delighted.people.create(email=person_email)
+
+    person_id = created['id']
+
+    response = delighted.survey_response.create(
+        person=person_id,
+        score=random_score,
+        person_properties=random_properties)
+
+    assert response['person'] == person_id
+    assert response['score'] == random_score
+
+    time.sleep(1)
+
+    return {'id': created['id'], 'email': person_email}
 
 
 @pytest.fixture(scope='module')
@@ -77,7 +107,7 @@ def score():
 
 @pytest.fixture(scope='module')
 def email():
-    return 'kaeawc.farore+%s@gmail.com' % uuid.uuid4()
+    return 'test+%s@example.com' % uuid.uuid4()
 
 
 @pytest.fixture(scope='module')
