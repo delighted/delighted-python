@@ -151,18 +151,41 @@ class Delighted(object):
         try:
             json_result = json.loads(response_body)
         except:
-            json_result = {'errors': response_body}
+            content_type = r.headers['Content-Type']
+            json_result = self.get_error_response(
+                content_type=content_type,
+                response_body=response_body)
 
         if status != requests.codes.ok and \
                 status != requests.codes.created:
-            raise self.cast_error(status, str(json_result['errors']))
+
+            err_msg = json_result.get('errors', 'Unknown Error')
+            raise self.cast_error(status, str(err_msg))
 
         return json_result
 
+    def get_error_response(self, content_type, response_body):
+        if 'text/html' in content_type:
+            import re
+
+            title_regex = re.compile(r'<title>(.*)</title>')
+
+            matches = title_regex.search(response_body)
+
+            if matches and matches.group(0) and matches.group(1):
+                return {'errors': matches.group(1)}
+            else:
+                return {'errors': 'Could not parse error response.'}
+        else:
+
+            self.log('Unexpected Content-Type in response: %s' % content_type)
+
+            return {'errors': response_body}
+
     def cast_error(self, status_code, result):
         '''Take a result representing an error and cast it to a specific
-        exception if possible (use a generic delighted.errors.DelightedError exception
-        for unknown cases)'''
+        exception if possible (use a generic delighted.errors.DelightedError
+        exception for unknown cases)'''
 
         if status_code in API_ERRORS:
             return API_ERRORS[status_code](result)
