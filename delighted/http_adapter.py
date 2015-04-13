@@ -1,10 +1,11 @@
 import requests
 
+from delighted.http_response import HTTPResponse
+
 
 class HTTPAdapter(object):
-    """Wraps the logic around HTTP."""
 
     def request(self, method, uri, headers={}, data=None):
-        response = requests.request(method, uri, headers=headers, data=data)
+        resp = requests.request(method, uri, headers=headers, data=data)
 
-        return response.json()
+        return HTTPResponse(resp.status_code, resp.headers, resp.text)

@@ -4,7 +4,7 @@ __author__ = 'Robby Colvin'
 __license__ = 'MIT'
 
 api_key = None
-api_base_url = 'https://api.delightedapp.com/v1'
+api_base_url = 'https://api.delightedapp.com/v1/'
 api_version = 1
 
 from delighted.client import Client
@@ -21,7 +21,11 @@ def shared_client():
 
 ### Resources ###
 
-from delighted.resource import (  # noqa
-    Metrics)
+from delighted.resource import (Metrics, Person, SurveyRequest, SurveyResponse,
+					            Unsubscribe)
 
 metrics = Metrics
+person = Person
+survey_request = SurveyRequest
+survey_response = SurveyResponse
+unsubscribe = Unsubscribe

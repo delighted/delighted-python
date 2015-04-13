@@ -4,15 +4,23 @@ Official Python client for the [Delighted API](https://delighted.com/docs/api).
 
 ## Installation
 
-Add `gem 'delighted'` to your application's Gemfile, and then run `bundle` to install.
+```
+pip install --upgrade delighted
+```
+
+or
+
+```
+easy_install --upgrade delighted
+```
 
 ## Configuration
 
-To get started, you need to configure the client with your secret API key. If you're using Rails, you should add the following to new initializer file in `config/initializers/delighted.rb`.
+To get started, you need to configure the client with your secret API key.
 
 ```python
-require 'delighted'
-Delighted.api_key = 'YOUR_API_KEY'
+import delighted
+delighted.api_key = 'YOUR_API_KEY'
 ```
 
 For further options, read the [advanced configuration section](#advanced-configuration).
@@ -25,40 +33,40 @@ Adding/updating people and scheduling surveys:
 
 ```python
 # Add a new person, and schedule a survey immediately
-person1 = Delighted::Person.create(:email => "foo+test1@delighted.com")
+person1 = delighted.person.create(email="foo+test1@delighted.com")
 
 # Add a new person, and schedule a survey after 1 minute (60 seconds)
-person2 = Delighted::Person.create(:email => "foo+test2@delighted.com",
-  :delay => 60)
+person2 = delighted.person.create(email="foo+test2@delighted.com", delay=60)
 
 # Add a new person, but do not schedule a survey
-person3 = Delighted::Person.create(:email => "foo+test3@delighted.com",
-  :send => false)
+person3 = delighted.person.create(email="foo+test3@delighted.com", send=false)
 
 # Add a new person with full set of attributes, including a custom question
 # product name, and schedule a survey with a 30 second delay
-person4 = Delighted::Person.create(:email => "foo+test4@delighted.com",
-  :name => "Joe Bloggs", :properties => { :customer_id => 123, :country => "USA",
-  :question_product_name => "Apple Genius Bar" }, :delay => 30)
+person4 = delighted.person.create(
+        email="foo+test4@delighted.com", name="Joe Bloggs",
+        properties={customer_id=123, country="USA",
+                    question_product_name="Apple Genius Bar" },
+        delay => 30)
 
 # Update an existing person (identified by email), adding a name, without
 # scheduling a survey
-updated_person1 = Delighted::Person.create(:email => "foo+test1@delighted.com",
-  :name => "James Scott", :send => false)
+updated_person1 = delighted.person.create(email="foo+test1@delighted.com",
+                                          name="James Scott", send=false)
 ```
 
 Unsubscribing people:
 
 ```python
 # Unsubscribe an existing person
-Delighted::Unsubscribe.create(:person_email => "foo+test1@delighted.com")
+delighted.unsubscribe.create(person_email="foo+test1@delighted.com")
 ```
 
 Deleting pending survey requests
 
 ```python
 # Delete all pending (scheduled but unsent) survey requests for a person, by email.
-Delighted::SurveyRequest.delete_pending(:person_email => "foo+test1@delighted.com")
+delighted.survey_request.delete_pending(person_email="foo+test1@delighted.com")
 ```
 
 Adding survey responses:
@@ -140,19 +148,21 @@ metrics = Delighted::Metrics.retrieve(:since => Time.utc(2013, 10, 01),
 The following options are configurable for the client:
 
 ```python
-Delighted.api_key
-Delighted.api_base_url # default: 'https://api.delighted.com/v1'
-Delighted.http_adapter # default: Delighted::HTTPAdapter.new
+delighted.api_key
+delighted.api_base_url # default: 'https://api.delighted.com/v1'
+delighted.http_adapter # default: delighted.HTTPAdapter
 ```
 
-By default, a shared instance of `Delighted::Client` is created lazily in `Delighted.shared_client`. If you want to create your own client, perhaps for test or if you have multiple API keys, you can:
+By default, a shared instance of `delighted.client.Client` is created lazily in `delighted.shared_client()`. If you want to create your own client, perhaps for test or if you have multiple API keys, you can:
 
 ```python
 # Create an custom client instance, and pass as last argument to resource actions
-client = Delighted::Client.new(:api_key => 'API_KEY',
-  :api_base_url => 'https://api.delighted.com/v1',
-  :http_adapter => Delighted::HTTPAdapter.new)
-metrics_from_custom_client = Delighted::Metrics.retrieve({}, client)
+import delighted
+from delighted.client import Client
+client = Client(api_key=‘API_KEY',
+                api_base_url=‘https://api.delighted.com/v1',
+                http_adapter=HTTPAdapter())
+metrics_from_custom_client = delighted.metrics.retrieve(client=client)
 
 # Or, you can set Delighted.shared_client yourself
 Delighted.shared_client = Delighted::Client.new(:api_key => 'API_KEY',
