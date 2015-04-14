@@ -73,11 +73,11 @@ Adding survey responses:
 
 ```python
 # Add a survey response, score only
-survey_response1 = Delighted::SurveyResponse.create(:person => person1.id,
+survey_response1 = delighted.survey_response.create(:person => person1.id,
   :score => 10)
 
 # Add *another* survey response (for the same person), score and comment
-survey_response2 = Delighted::SurveyResponse.create(:person => person1.id,
+survey_response2 = delighted.survey_response.create(:person => person1.id,
   :score => 5, :comment => "Really nice.")
 ```
 
@@ -85,45 +85,49 @@ Retrieving a survey response:
 
 ```python
 # Retrieve an existing survey response
-survey_response3 = Delighted::SurveyResponse.retrieve('123')
+survey_response3 = delighted.survey_response.retrieve('123')
 ```
 
 Updating survey responses:
 
 ```python
 # Update a survey response score
-survey_response4 = Delighted::SurveyResponse.retrieve('234')
+survey_response4 = delighted.survey_response.retrieve('234')
 survey_response4.score = 10
-survey_response4.save #=> #<Delighted::SurveyResponse:...>
+survey_response4.save
+#=> <delighted.survey_response.SurveyResponse object at 0xabc123>
 
 # Update (or add) survey response properties
 survey_response4.person_properties = { :segment => "Online" }
-survey_response4.save #=> #<Delighted::SurveyResponse:...>
+survey_response4.save
+#=> <delighted.survey_response.SurveyResponse object at 0xabc123>
 
 # Update person who recorded the survey response
 survey_response4.person = '321'
-survey_response4.save #=> #<Delighted::SurveyResponse:...>
+survey_response4.save
+#=> <delighted.survey_response.SurveyResponse object at 0xabc123>
 ```
 
 Listing survey responses:
 
 ```python
 # List all survey responses, 20 per page, first 2 pages
-survey_responses_page1 = Delighted::SurveyResponse.all
-survey_responses_page2 = Delighted::SurveyResponse.all(:page => 2)
+survey_responses_page1 = delighted.survey_response.all
+survey_responses_page2 = delighted.survey_response.all(:page => 2)
 
 # List all survey responses, 20 per page, expanding person object
-survey_responses_page1_expanded = Delighted::SurveyResponse.all(:expand => ['person'])
-survey_responses_page1_expanded[0].person #=> #<Delighted::Person:...>
+survey_responses_page1_expanded = delighted.survey_response.all(:expand => ['person'])
+survey_responses_page1_expanded[0].person
+#=> <delighted.resource.Person object at 0xabc123>
 
 # List all survey responses, 20 per page, for a specific trend (ID: 123)
-survey_responses_page1_trend = Delighted::SurveyResponse.all(:trend => "123")
+survey_responses_page1_trend = delighted.survey_response.all(:trend => "123")
 
 # List all survey responses, 20 per page, in reverse chronological order (newest first)
-survey_responses_page1_desc = Delighted::SurveyResponse.all(:order => 'desc')
+survey_responses_page1_desc = delighted.survey_response.all(:order => 'desc')
 
 # List all survey responses, 100 per page, page 5, with a time range
-filtered_survey_responses = Delighted::SurveyResponse.all(:page => 5,
+filtered_survey_responses = delighted.survey_response.all(:page => 5,
   :per_page => 100, :since => Time.utc(2013, 10, 01),
   :until => Time.utc(2013, 11, 01))
 ```
@@ -132,14 +136,14 @@ Retrieving metrics:
 
 ```python
 # Get current metrics, 30-day simple moving average, from most recent response
-metrics = Delighted::Metrics.retrieve
+metrics = delighted.Metrics.retrieve
 
 # Get current metrics, 30-day simple moving average, from most recent response,
 # for a specific trend (ID: 123)
-metrics = Delighted::Metrics.retrieve(:trend => "123")
+metrics = delighted.Metrics.retrieve(:trend => "123")
 
 # Get metrics, for given range
-metrics = Delighted::Metrics.retrieve(:since => Time.utc(2013, 10, 01),
+metrics = delighted.Metrics.retrieve(:since => Time.utc(2013, 10, 01),
   :until => Time.utc(2013, 11, 01))
 ```
 
@@ -165,18 +169,16 @@ client = Client(api_key=‘API_KEY',
 metrics_from_custom_client = delighted.metrics.retrieve(client=client)
 
 # Or, you can set Delighted.shared_client yourself
-Delighted.shared_client = Delighted::Client.new(:api_key => 'API_KEY',
+Delighted.shared_client = delighted.Client.new(:api_key => 'API_KEY',
   :api_base_url => 'https://api.delighted.com/v1',
-  :http_adapter => Delighted::HTTPAdapter.new)
-metrics_from_custom_shared_client = Delighted::Metrics.retrieve
+  :http_adapter => delighted.HTTPAdapter.new)
+metrics_from_custom_shared_client = delighted.Metrics.retrieve
 ```
 
-## Supported runtimes
+## Supported versions
 
-- Python MRI (1.8.7+)
-- JPython (1.8 + 1.9 modes)
-- RBX (2.1.1)
-- REE (1.8.7-2012.02)
+- 2.6, 2.7, 3.2, 3.3, 3.4
+- pypy, pypy3
 
 ## Contributing
 

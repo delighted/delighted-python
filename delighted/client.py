@@ -1,5 +1,6 @@
 from base64 import b64encode
 import json
+import urllib
 
 import delighted
 from delighted.http_adapter import HTTPAdapter
@@ -27,6 +28,8 @@ class Client(object):
             headers['Content-Type'] = 'application/json'
 
         url = "%s%s" % (delighted.api_base_url, resource)
+        # if method is 'get':
+        #     url += urllib.urlencode(data)
 
         response = self.http_adapter.request(method, url, headers, data)
         return self._handle_response(response)

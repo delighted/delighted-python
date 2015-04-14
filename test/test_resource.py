@@ -34,9 +34,9 @@ class TestResource(DelightedTestCase):
 
         person = delighted.person.create(email=email)
         self.assertIs(type(person), Person)
-        self.assertEqual(dict(person), data)
+        self.assertEqual(dict(person), {'email': email})
         self.assertEqual(person.email, email)
-        self.assertEqual('123', person.id)
+        self.assertEqual('123', person._id)
         self.check_call('post', url, post_headers, {'email': email})
 
     def test_unsubscribing_a_person(self):
@@ -64,10 +64,10 @@ class TestResource(DelightedTestCase):
         survey_response = delighted.survey_response.create(person='123',
                                                            score=10)
         self.assertIs(SurveyResponse, type(survey_response))
-        self.assertEqual({'id': '456', 'person': '123', 'score': 10}, dict(survey_response))
+        self.assertEqual({'person': '123', 'score': 10}, dict(survey_response))
         self.assertEqual('123', survey_response.person)
         self.assertEqual(10, survey_response.score)
-        self.assertEqual('456', survey_response.id)
+        self.assertEqual('456', survey_response._id)
         self.check_call('post', url, post_headers, {'person': '123', 'score': 10})
 
     def test_retrieving_a_survey_response_expand_person(self):
@@ -80,11 +80,63 @@ class TestResource(DelightedTestCase):
         survey_response = delighted.survey_response.retrieve('456', expand=['person'])
         self.assertIs(SurveyResponse, type(survey_response))
         self.assertIs(Person, type(survey_response.person))
-        # self.assertEqual({'id': '456', 'person': '123', 'score': 10 }, dir(survey_response))
-        self.assertEqual('123', survey_response.person.id)
+        # self.assertEqual({'person': '123', 'score': 10 }, dict(survey_response))
+        self.assertEqual('123', survey_response.person._id)
         # assert_equal({ :email => 'foo@bar.com' }, survey_response.person.to_hash)
         self.assertEqual(10, survey_response.score)
-        self.assertEqual('456', survey_response.id)
+        self.assertEqual('456', survey_response._id)
 
     def test_updating_a_survey_response(self):
-        pass
+        url = 'https://api.delightedapp.com/v1/survey_responses/456'
+        data = { 'person': '123', 'score': 10 }
+        self.mock_response(200, {}, {'id': '456', 'person': '123', 'score': 10 })
+
+        survey_response = delighted.survey_response({'id': '456', 'person': '321', 'score': 1})
+        survey_response.person = '123'
+        survey_response.score = 10
+        # raise Exception(survey_response)
+        self.assertIs(SurveyResponse, type(survey_response.save()))
+        self.check_call('put', url, post_headers, data)
+        # saved_response = survey_response.save()
+        # assert_equal({ 'person': '123', 'score': 10 }, survey_response.to_hash)
+        self.assertEqual('123', survey_response.person)
+        self.assertEqual(10, survey_response.score)
+        self.assertEqual('456', survey_response._id)
+
+
+    def test_listing_all_survey_responses(self):
+        url = 'https://api.delightedapp.com/v1/survey_responses?order=desc'
+        data = { 'person': '123', 'score': 10 }
+        self.mock_response(200, {}, [{ 'id': '123', 'comment': 'One' }, { 'id': '456', 'comment': 'Two' }])
+
+        survey_responses = delighted.survey_response.all(order='desc')
+        self.check_call('get', url, get_headers, {})
+        self.assertIs(list, type(survey_responses))
+        self.assertIs(SurveyResponse, type(survey_responses[0]))
+        self.assertEqual({ 'comment': 'One' }, dict(survey_responses[0]))
+        self.assertEqual('One', survey_responses[0].comment)
+        self.assertEqual('123', survey_responses[0]._id)
+        self.assertEqual({ 'comment': 'Two' }, dict(survey_responses[1]))
+        self.assertEqual('Two', survey_responses[1].comment)
+        self.assertEqual('456', survey_responses[1]._id)
+
+    def test_listing_all_survey_responses_expand_person(self):
+        url = 'https://api.delightedapp.com/v1/survey_responses?expand%5B%5D=person'
+        data = { 'person': '123', 'score': 10 }
+        self.mock_response(200, {}, [{ 'id': '123', 'comment': 'One', 'person': { 'id': '123', 'email': 'foo@bar.com' } }, { 'id': '456', 'comment': 'Two', 'person': { 'id': '123', 'email': 'foo@bar.com' } }])
+
+        survey_responses = delighted.survey_response.all(expand=['person'])
+        self.check_call('get', url, get_headers, {})
+        # assert_kind_of Delighted::EnumerableResourceCollection, survey_responses
+        # assert_kind_of Delighted::SurveyResponse, survey_responses[0]
+        # assert_equal({ :person => '123', :comment => 'One' }, survey_responses[0].to_hash)
+        # assert_equal 'One', survey_responses[0].comment
+        # assert_equal '123', survey_responses[0].id
+        # assert_kind_of Delighted::Person, survey_responses[0].person
+        # assert_equal({ :email => 'foo@bar.com' }, survey_responses[0].person.to_hash)
+        # assert_kind_of Delighted::SurveyResponse, survey_responses[1]
+        # assert_equal({ :person => '123', :comment => 'Two' }, survey_responses[1].to_hash)
+        # assert_equal 'Two', survey_responses[1].comment
+        # assert_equal '456', survey_responses[1].id
+        # assert_kind_of Delighted::Person, survey_responses[1].person
+        # assert_equal({ :email => 'foo@bar.com' }, survey_responses[1].person.to_hash)

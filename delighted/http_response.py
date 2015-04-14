@@ -1,5 +1,4 @@
 class HTTPResponse(object):
-	"""Wraps a response from HTTPAdapter"""
 
 	def __init__(self, status_code, headers, body):
 		self.status_code = status_code

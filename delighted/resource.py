@@ -1,7 +1,8 @@
 from collections import MutableMapping
 from copy import deepcopy
 from itertools import combinations
-from urllib import quote
+import json
+from urllib import quote, urlencode
 
 from delighted import shared_client
 
@@ -12,18 +13,19 @@ class Resource(dict):
         super(Resource, self).__init__()
 
         if 'id' in attrs:
-            self.id = attrs['id']
+            self._id = attrs['id']
             del attrs['id']
 
-        self._attrs = attrs
-
-        for k, v in self._attrs.iteritems():
+        for k, v in attrs.iteritems():
+            # if k is "id": raise Exception("POOP")
             super(Resource, self).__setitem__(k, v)
+
+        # self._attrs = attrs
 
         if hasattr(self.__class__, 'expandable_attributes'):
             for attr, klass in self.expandable_attributes.items():
-                if attr in self._attrs and dict == type(self._attrs[attr]):
-                    expandable_attrs = self._attrs.pop(attr)
+                if attr in attrs and dict == type(attrs[attr]):
+                    expandable_attrs = attrs.pop(attr)
                     object.__setattr__(self, attr, klass(expandable_attrs))
 
     def __setattr__(self, k, v):
@@ -41,6 +43,12 @@ class Resource(dict):
         except KeyError, err:
             raise AttributeError(*err.args)
 
+    def params(self):
+        for attr in dir(self):
+            if not callable(attr) and not attr.startswith("_"):
+                pass
+
+
     @classmethod
     def _set_client(self, params):
         if 'client' in params:
@@ -49,7 +57,11 @@ class Resource(dict):
             self.client = shared_client()
 
 class AllResource(Resource):
-    pass
+    @classmethod
+    def all(self, **params):
+        self._set_client(params)
+        j = self.client.request('get', self.path + '?' + urlencode(dict(params)), {})
+        return [self(i) for i in j]
 
 
 class CreateableResource(Resource):
@@ -57,8 +69,8 @@ class CreateableResource(Resource):
     @classmethod
     def create(self, **params):
         self._set_client(params)
-        json = self.client.request('post', self.path, {}, params)
-        return self(json)
+        j = self.client.request('post', self.path, {}, params)
+        return self(j)
 
 
 class RetrievableResource(Resource):
@@ -67,15 +79,21 @@ class RetrievableResource(Resource):
     def retrieve(self, *args, **params):
         self._set_client(params)
         path = '%s/%s' % (self.path, args[0]) if len(args) > 0 else self.path
-        json = self.client.request('get', path, {}, params)
-        return self(json)
+        j = self.client.request('get', path, {}, params)
+        return self(j)
 
 
 class UpdateableResource(Resource):
+    # @classmethod
+    # def path(self, id):
+    #     return "%s%d" % (self.path, id) if id else self.path
 
-    @classmethod
-    def update(self, **params):
-        pass
+    # @classmethod
+    def save(self, **params):
+        self._set_client(params)
+        path = '%s/%s' % (self.path, self._id) if self._id else self.path
+        j = self.client.request('put', path, {}, dict(self))
+        return type(self)(j)
 
 
 class Metrics(RetrievableResource):
