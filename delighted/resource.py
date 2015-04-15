@@ -17,10 +17,7 @@ class Resource(dict):
             del attrs['id']
 
         for k, v in attrs.iteritems():
-            # if k is "id": raise Exception("POOP")
             super(Resource, self).__setitem__(k, v)
-
-        # self._attrs = attrs
 
         if hasattr(self.__class__, 'expandable_attributes'):
             for attr, klass in self.expandable_attributes.items():
@@ -43,7 +40,7 @@ class Resource(dict):
         except KeyError, err:
             raise AttributeError(*err.args)
 
-    def params(self):
+    def to_dict(self):
         for attr in dir(self):
             if not callable(attr) and not attr.startswith("_"):
                 pass
@@ -60,7 +57,7 @@ class AllResource(Resource):
     @classmethod
     def all(self, **params):
         self._set_client(params)
-        j = self.client.request('get', self.path + '?' + urlencode(dict(params)), {})
+        j = self.client.request('get', self.path, {}, params)
         return [self(i) for i in j]
 
 
@@ -84,13 +81,10 @@ class RetrievableResource(Resource):
 
 
 class UpdateableResource(Resource):
-    # @classmethod
-    # def path(self, id):
-    #     return "%s%d" % (self.path, id) if id else self.path
-
-    # @classmethod
     def save(self, **params):
         self._set_client(params)
+        if hasattr(self.__class__, 'expandable_attributes'):
+            params.update({'expand': list(self.__class__.expandable_attributes.keys())})
         path = '%s/%s' % (self.path, self._id) if self._id else self.path
         j = self.client.request('put', path, {}, dict(self))
         return type(self)(j)

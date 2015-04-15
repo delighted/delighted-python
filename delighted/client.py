@@ -1,6 +1,10 @@
 from base64 import b64encode
+import calendar
+import datetime
 import json
+import time
 import urllib
+import urlparse
 
 import delighted
 from delighted.http_adapter import HTTPAdapter
@@ -28,8 +32,10 @@ class Client(object):
             headers['Content-Type'] = 'application/json'
 
         url = "%s%s" % (delighted.api_base_url, resource)
-        # if method is 'get':
-        #     url += urllib.urlencode(data)
+        if method is 'get' and params != {}:
+            scheme, netloc, path, base_query, fragment = urlparse.urlsplit(url)
+            url += '?' + urllib.urlencode(list(self._to_query(params)))
+            data = '{}'
 
         response = self.http_adapter.request(method, url, headers, data)
         return self._handle_response(response)
@@ -47,3 +53,30 @@ class Client(object):
             raise GeneralAPIError(response)
         if response.status_code is 503:
             raise ServiceUnavailableError(response)
+
+    @classmethod
+    def _encode_datetime(dttime):
+        if dttime.tzinfo and dttime.tzinfo.utcoffset(dttime) is not None:
+            utc_timestamp = calendar.timegm(dttime.utctimetuple())
+        else:
+            utc_timestamp = time.mktime(dttime.timetuple())
+
+        return int(utc_timestamp)
+
+    @classmethod
+    def _to_query(self, data):
+        for key, value in data.iteritems():
+            if value is None:
+                continue
+            elif isinstance(value, list) or isinstance(value, tuple):
+                for subvalue in value:
+                    yield ("%s[]" % (key,), subvalue)
+            elif isinstance(value, dict):
+                subdict = dict(('%s[%s]' % (key, subkey), subvalue) for
+                               subkey, subvalue in value.iteritems())
+                for subkey, subvalue in self._to_query(subdict):
+                    yield (subkey, subvalue)
+            elif isinstance(value, datetime.datetime):
+                yield (key, _encode_datetime(value))
+            else:
+                yield (key, value)

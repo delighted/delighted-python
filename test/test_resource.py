@@ -94,10 +94,8 @@ class TestResource(DelightedTestCase):
         survey_response = delighted.survey_response({'id': '456', 'person': '321', 'score': 1})
         survey_response.person = '123'
         survey_response.score = 10
-        # raise Exception(survey_response)
         self.assertIs(SurveyResponse, type(survey_response.save()))
         self.check_call('put', url, post_headers, data)
-        # saved_response = survey_response.save()
         # assert_equal({ 'person': '123', 'score': 10 }, survey_response.to_hash)
         self.assertEqual('123', survey_response.person)
         self.assertEqual(10, survey_response.score)
@@ -116,6 +114,7 @@ class TestResource(DelightedTestCase):
         self.assertEqual({ 'comment': 'One' }, dict(survey_responses[0]))
         self.assertEqual('One', survey_responses[0].comment)
         self.assertEqual('123', survey_responses[0]._id)
+        self.assertIs(SurveyResponse, type(survey_responses[1]))
         self.assertEqual({ 'comment': 'Two' }, dict(survey_responses[1]))
         self.assertEqual('Two', survey_responses[1].comment)
         self.assertEqual('456', survey_responses[1]._id)
@@ -127,16 +126,16 @@ class TestResource(DelightedTestCase):
 
         survey_responses = delighted.survey_response.all(expand=['person'])
         self.check_call('get', url, get_headers, {})
-        # assert_kind_of Delighted::EnumerableResourceCollection, survey_responses
-        # assert_kind_of Delighted::SurveyResponse, survey_responses[0]
-        # assert_equal({ :person => '123', :comment => 'One' }, survey_responses[0].to_hash)
-        # assert_equal 'One', survey_responses[0].comment
-        # assert_equal '123', survey_responses[0].id
-        # assert_kind_of Delighted::Person, survey_responses[0].person
-        # assert_equal({ :email => 'foo@bar.com' }, survey_responses[0].person.to_hash)
-        # assert_kind_of Delighted::SurveyResponse, survey_responses[1]
+        self.assertIs(list, type(survey_responses))
+        self.assertIs(SurveyResponse, type(survey_responses[0]))
+        # self.assertEqual({ 'person': '123', 'comment': 'One' }, dict(survey_responses[0]))
+        self.assertEqual('One', survey_responses[0].comment)
+        self.assertEqual('123', survey_responses[0]._id)
+        self.assertEqual(Person, type(survey_responses[0].person))
+        self.assertEqual({ 'email': 'foo@bar.com' }, survey_responses[0].person)
+        self.assertIs(SurveyResponse, type(survey_responses[1]))
         # assert_equal({ :person => '123', :comment => 'Two' }, survey_responses[1].to_hash)
-        # assert_equal 'Two', survey_responses[1].comment
-        # assert_equal '456', survey_responses[1].id
-        # assert_kind_of Delighted::Person, survey_responses[1].person
+        self.assertEqual('One', survey_responses[0].comment)
+        self.assertEqual('123', survey_responses[0]._id)
+        self.assertEqual(Person, type(survey_responses[1].person))
         # assert_equal({ :email => 'foo@bar.com' }, survey_responses[1].person.to_hash)
