@@ -180,11 +180,3 @@ metrics_from_custom_shared_client = delighted.Metrics.retrieve()
 
 - 2.6, 2.7, 3.2, 3.3, 3.4
 - pypy, pypy3
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
