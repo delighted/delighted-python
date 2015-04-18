@@ -22,8 +22,9 @@ setup(
     url='https://delighted.com/',
     packages=['delighted'],
     package_dir={'delighted': 'delighted'},
-    test_suite='test',
     install_requires=['requests'],
+    test_suite='test',
+    test_requires=['mock'],
     license='MIT',
     classifiers=(
         'Development Status :: 4 - Beta',
