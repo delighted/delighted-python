@@ -74,12 +74,12 @@ Adding survey responses:
 ```python
 # Add a survey response, score only
 survey_response1 = delighted.SurveyResponse.create(person=person1.id,
-  score=10)
+                                                   score=10)
 
 # Add *another* survey response (for the same person), score and comment
 survey_response2 = delighted.SurveyResponse.create(person=person1.id,
-                                                    score=5,
-                                                    comment='Really nice.')
+                                                   score=5,
+                                                   comment='Really nice.')
 ```
 
 Retrieving a survey response:
@@ -119,7 +119,7 @@ survey_responses_page2 = delighted.SurveyResponse.all(page=2)
 # List all survey responses, 20 per page, expanding person object
 survey_responses_page1_expanded = delighted.SurveyResponse.all(expand=['person'])
 survey_responses_page1_expanded[0].person
-#=> <delighted.resource.Person object at 0xabc123>
+#=> <delighted.Person object at 0xabc123>
 
 # List all survey responses, 20 per page, for a specific trend (ID: 123)
 survey_responses_page1_trend = delighted.SurveyResponse.all(trend='123')

@@ -5,9 +5,10 @@ __license__ = 'MIT'
 
 api_key = None
 api_base_url = 'https://api.delightedapp.com/v1/'
-api_version = 1
 
 shared_client = None
+
+
 def get_shared_client():
     global shared_client
     if not shared_client:
@@ -15,7 +16,7 @@ def get_shared_client():
     return shared_client
 
 from delighted.client import Client
-from delighted.resource import (
+from delighted.resource import (  # noqa
     Metrics,
     Person,
     SurveyRequest,

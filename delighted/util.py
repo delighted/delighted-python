@@ -11,6 +11,7 @@ def _encode_datetime(dttime):
 
     return int(utc_timestamp)
 
+
 def query_encode(data):
     for key, value in data.iteritems():
         if value is None:

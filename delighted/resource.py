@@ -1,8 +1,4 @@
-from collections import MutableMapping
-from copy import deepcopy
-from itertools import combinations
-import json
-from urllib import quote, urlencode
+from urllib import quote
 
 from delighted import get_shared_client
 
@@ -20,7 +16,8 @@ class Resource(dict):
             for attr, klass in self.expandable_attributes.items():
                 if attr in attrs and dict == type(attrs[attr]):
                     expandable_attrs = attrs.pop(attr)
-                    super(Resource, self).__setitem__(attr, expandable_attrs['id'])
+                    item_id = expandable_attrs['id']
+                    super(Resource, self).__setitem__(attr, item_id)
                     object.__setattr__(self, attr, klass(expandable_attrs))
 
         for k, v in attrs.iteritems():
@@ -46,13 +43,13 @@ class Resource(dict):
             if not callable(attr) and not attr.startswith("_"):
                 pass
 
-
     @classmethod
     def _set_client(self, params):
         if 'client' in params:
             self.client = params['client']
         else:
             self.client = get_shared_client()
+
 
 class AllResource(Resource):
     @classmethod
@@ -85,7 +82,8 @@ class UpdateableResource(Resource):
     def save(self, **params):
         self._set_client(params)
         if hasattr(self.__class__, 'expandable_attributes'):
-            params.update({'expand': list(self.__class__.expandable_attributes.keys())})
+            expand_attrs = list(self.__class__.expandable_attributes.keys())
+            params.update({'expand': expand_attrs})
         path = '%s/%s' % (self.path, self._id) if self._id else self.path
         j = self.client.request('put', path, {}, dict(self))
         return type(self)(j)
@@ -118,7 +116,7 @@ class SurveyRequest(Resource):
 
 class SurveyResponse(AllResource, CreateableResource,
                      RetrievableResource, UpdateableResource):
-    expandable_attributes = { 'person': Person }
+    expandable_attributes = {'person': Person}
     path = 'survey_responses'
 
 
