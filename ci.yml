@@ -8,7 +8,7 @@ python:
   - "pypy"
   - "pypy3"
 install:
-  - pip install flake8 --use-mirrors
+  - pip install flake8 mock --use-mirrors
   - python setup.py install
 script:
   - if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then flake8 delighted; fi
