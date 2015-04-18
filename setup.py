@@ -12,14 +12,11 @@ with open('delighted/__init__.py', 'r') as fd:
 if not version:
     raise RuntimeError('Cannot find version information')
 
-# with open('LONG_DESCRIPTION') as f:
-#     long_description = f.read()
-
 setup(
     name='delighted',
     version=version,
     description='Delighted API Python Client.',
-    # long_description=long_description,
+    long_description=open('README.md').read(),
     author='Robby Colvin',
     author_email='geetarista@gmail.com',
     url='https://delighted.com/',
