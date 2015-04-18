@@ -33,51 +33,51 @@ Adding/updating people and scheduling surveys:
 
 ```python
 # Add a new person, and schedule a survey immediately
-person1 = delighted.person.create(email="foo+test1@delighted.com")
+person1 = delighted.Person.create(email='foo+test1@delighted.com')
 
 # Add a new person, and schedule a survey after 1 minute (60 seconds)
-person2 = delighted.person.create(email="foo+test2@delighted.com", delay=60)
+person2 = delighted.Person.create(email='foo+test2@delighted.com', delay=60)
 
 # Add a new person, but do not schedule a survey
-person3 = delighted.person.create(email="foo+test3@delighted.com", send=false)
+person3 = delighted.Person.create(email='foo+test3@delighted.com', send=false)
 
 # Add a new person with full set of attributes, including a custom question
 # product name, and schedule a survey with a 30 second delay
-person4 = delighted.person.create(
-        email="foo+test4@delighted.com", name="Joe Bloggs",
+person4 = delighted.Person.create(
+        email='foo+test4@delighted.com', name='Joe Bloggs',
         properties={'customer_id': 123, 'country': 'USA',
-                    'question_product_name': 'Apple Genius Bar' },
+                    'question_product_name': 'The London Trench' },
         delay=30)
 
 # Update an existing person (identified by email), adding a name, without
 # scheduling a survey
-updated_person1 = delighted.person.create(email="foo+test1@delighted.com",
-                                          name="James Scott", send=false)
+updated_person1 = delighted.Person.create(email='foo+test1@delighted.com',
+                                          name='James Scott', send=false)
 ```
 
 Unsubscribing people:
 
 ```python
 # Unsubscribe an existing person
-delighted.unsubscribe.create(person_email="foo+test1@delighted.com")
+delighted.unsubscribe.create(person_email='foo+test1@delighted.com')
 ```
 
 Deleting pending survey requests
 
 ```python
 # Delete all pending (scheduled but unsent) survey requests for a person, by email.
-delighted.survey_request.delete_pending(person_email="foo+test1@delighted.com")
+delighted.SurveyRequest.delete_pending(person_email='foo+test1@delighted.com')
 ```
 
 Adding survey responses:
 
 ```python
 # Add a survey response, score only
-survey_response1 = delighted.survey_response.create(person=person1.id,
+survey_response1 = delighted.SurveyResponse.create(person=person1.id,
   score=10)
 
 # Add *another* survey response (for the same person), score and comment
-survey_response2 = delighted.survey_response.create(person=person1.id,
+survey_response2 = delighted.SurveyResponse.create(person=person1.id,
                                                     score=5,
                                                     comment='Really nice.')
 ```
@@ -86,49 +86,49 @@ Retrieving a survey response:
 
 ```python
 # Retrieve an existing survey response
-survey_response3 = delighted.survey_response.retrieve('123')
+survey_response3 = delighted.SurveyResponse.retrieve('123')
 ```
 
 Updating survey responses:
 
 ```python
 # Update a survey response score
-survey_response4 = delighted.survey_response.retrieve('234')
+survey_response4 = delighted.SurveyResponse.retrieve('234')
 survey_response4.score = 10
 survey_response4.save
-#=> <delighted.survey_response.SurveyResponse object at 0xabc123>
+#=> <delighted.SurveyResponse object at 0xabc123>
 
 # Update (or add) survey response properties
 survey_response4.person_properties = { segment: 'Online' }
 survey_response4.save
-#=> <delighted.survey_response.SurveyResponse object at 0xabc123>
+#=> <delighted.SurveyResponse object at 0xabc123>
 
 # Update person who recorded the survey response
 survey_response4.person = '321'
 survey_response4.save
-#=> <delighted.survey_response.SurveyResponse object at 0xabc123>
+#=> <delighted.SurveyResponse object at 0xabc123>
 ```
 
 Listing survey responses:
 
 ```python
 # List all survey responses, 20 per page, first 2 pages
-survey_responses_page1 = delighted.survey_response.all
-survey_responses_page2 = delighted.survey_response.all(page=2)
+survey_responses_page1 = delighted.SurveyResponse.all
+survey_responses_page2 = delighted.SurveyResponse.all(page=2)
 
 # List all survey responses, 20 per page, expanding person object
-survey_responses_page1_expanded = delighted.survey_response.all(expand=['person'])
+survey_responses_page1_expanded = delighted.SurveyResponse.all(expand=['person'])
 survey_responses_page1_expanded[0].person
 #=> <delighted.resource.Person object at 0xabc123>
 
 # List all survey responses, 20 per page, for a specific trend (ID: 123)
-survey_responses_page1_trend = delighted.survey_response.all(trend='123')
+survey_responses_page1_trend = delighted.SurveyResponse.all(trend='123')
 
 # List all survey responses, 20 per page, in reverse chronological order (newest first)
-survey_responses_page1_desc = delighted.survey_response.all(order='desc')
+survey_responses_page1_desc = delighted.SurveyResponse.all(order='desc')
 
 # List all survey responses, 100 per page, page 5, with a time range
-filtered_survey_responses = delighted.survey_response.all(page=5,
+filtered_survey_responses = delighted.SurveyResponse.all(page=5,
     per_page=100, since=datetime.date(2013, 10, 01),
     until=datetime.date(2013, 11, 01))
 ```
@@ -167,13 +167,13 @@ from delighted.client import Client
 client = Client(api_key=‘API_KEY',
                 api_base_url=‘https://api.delighted.com/v1',
                 http_adapter=HTTPAdapter())
-metrics_from_custom_client = delighted.metrics.retrieve(client=client)
+metrics_from_custom_client = delighted.Metrics.retrieve(client=client)
 
 # Or, you can set Delighted.shared_client yourself
 delighted.shared_client = delighted.client(api_key='API_KEY',
     api_base_url='https://api.delighted.com/v1',
     http_adapter=delighted.HTTPAdapter())
-metrics_from_custom_shared_client = delighted.metrics.retrieve()
+metrics_from_custom_shared_client = delighted.Metrics.retrieve()
 ```
 
 ## Supported versions

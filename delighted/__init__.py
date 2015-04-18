@@ -7,25 +7,18 @@ api_key = None
 api_base_url = 'https://api.delightedapp.com/v1/'
 api_version = 1
 
+shared_client = None
+def get_shared_client():
+    global shared_client
+    if not shared_client:
+        shared_client = Client(api_key=api_key)
+    return shared_client
+
 from delighted.client import Client
-
-
-singleton_client = None
-
-
-def shared_client():
-    global singleton_client
-    if not singleton_client:
-        singleton_client = Client(api_key=api_key)
-    return singleton_client
-
-### Resources ###
-
-from delighted.resource import (Metrics, Person, SurveyRequest, SurveyResponse,
-					            Unsubscribe)
-
-metrics = Metrics
-person = Person
-survey_request = SurveyRequest
-survey_response = SurveyResponse
-unsubscribe = Unsubscribe
+from delighted.resource import (
+    Metrics,
+    Person,
+    SurveyRequest,
+    SurveyResponse,
+    Unsubscribe,
+)

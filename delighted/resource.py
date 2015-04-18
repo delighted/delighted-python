@@ -4,7 +4,7 @@ from itertools import combinations
 import json
 from urllib import quote, urlencode
 
-from delighted import shared_client
+from delighted import get_shared_client
 
 
 class Resource(dict):
@@ -52,7 +52,7 @@ class Resource(dict):
         if 'client' in params:
             self.client = params['client']
         else:
-            self.client = shared_client()
+            self.client = get_shared_client()
 
 class AllResource(Resource):
     @classmethod
