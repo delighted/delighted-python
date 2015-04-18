@@ -16,14 +16,15 @@ class Resource(dict):
             self._id = attrs['id']
             del attrs['id']
 
-        for k, v in attrs.iteritems():
-            super(Resource, self).__setitem__(k, v)
-
         if hasattr(self.__class__, 'expandable_attributes'):
             for attr, klass in self.expandable_attributes.items():
                 if attr in attrs and dict == type(attrs[attr]):
                     expandable_attrs = attrs.pop(attr)
+                    super(Resource, self).__setitem__(attr, expandable_attrs['id'])
                     object.__setattr__(self, attr, klass(expandable_attrs))
+
+        for k, v in attrs.iteritems():
+            super(Resource, self).__setitem__(k, v)
 
     def __setattr__(self, k, v):
         if k[0] == '_' or k in self.__dict__:

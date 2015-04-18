@@ -1,18 +1,18 @@
 from base64 import b64encode
-import calendar
-import datetime
 import json
-import time
 import urllib
 import urlparse
 
 import delighted
 from delighted.http_adapter import HTTPAdapter
+from delighted.util import query_encode
 
 
 class Client(object):
 
-    def __init__(self, api_key=None, api_base_url=delighted.api_base_url,         http_adapter=HTTPAdapter()):
+    def __init__(self, api_key=None,
+                       api_base_url=delighted.api_base_url,
+                       http_adapter=HTTPAdapter()):
         if api_key is None:
             raise ValueError("You must provide an API key by setting " +
                     "delighted.api_key = '123abc' or passing " +
@@ -34,7 +34,7 @@ class Client(object):
         url = "%s%s" % (delighted.api_base_url, resource)
         if method is 'get' and params != {}:
             scheme, netloc, path, base_query, fragment = urlparse.urlsplit(url)
-            url += '?' + urllib.urlencode(list(self._to_query(params)))
+            url += '?' + urllib.urlencode(list(query_encode(params)))
             data = '{}'
 
         response = self.http_adapter.request(method, url, headers, data)
@@ -53,30 +53,3 @@ class Client(object):
             raise GeneralAPIError(response)
         if response.status_code is 503:
             raise ServiceUnavailableError(response)
-
-    @classmethod
-    def _encode_datetime(dttime):
-        if dttime.tzinfo and dttime.tzinfo.utcoffset(dttime) is not None:
-            utc_timestamp = calendar.timegm(dttime.utctimetuple())
-        else:
-            utc_timestamp = time.mktime(dttime.timetuple())
-
-        return int(utc_timestamp)
-
-    @classmethod
-    def _to_query(self, data):
-        for key, value in data.iteritems():
-            if value is None:
-                continue
-            elif isinstance(value, list) or isinstance(value, tuple):
-                for subvalue in value:
-                    yield ("%s[]" % (key,), subvalue)
-            elif isinstance(value, dict):
-                subdict = dict(('%s[%s]' % (key, subkey), subvalue) for
-                               subkey, subvalue in value.iteritems())
-                for subkey, subvalue in self._to_query(subdict):
-                    yield (subkey, subvalue)
-            elif isinstance(value, datetime.datetime):
-                yield (key, _encode_datetime(value))
-            else:
-                yield (key, value)
