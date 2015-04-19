@@ -1,3 +1,6 @@
+import calendar
+import datetime
+
 import delighted
 from . import get_headers, post_headers, DelightedTestCase
 
@@ -15,6 +18,23 @@ class TestResource(DelightedTestCase):
         self.mock_response(200, {}, data)
 
         metrics = delighted.Metrics.retrieve()
+        self.check_call('get', url, get_headers, {})
+        self.assertIs(delighted.Metrics, type(metrics))
+        self.assertEqual(dict(metrics), data)
+        self.assertEqual(metrics.nps, 10)
+        with self.assertRaises(AttributeError):
+            metrics.id
+
+    def test_retrieving_metrics_range(self):
+        data = {'nps': 10}
+        self.mock_response(200, {}, data)
+        since = calendar.timegm((datetime.datetime.utcnow() -
+                                datetime.timedelta(days=30)).timetuple())
+        until = calendar.timegm(datetime.datetime.utcnow().timetuple())
+        url = 'https://api.delightedapp.com/v1/metrics?since={}&until={}'
+        url = url.format(since, until)
+
+        metrics = delighted.Metrics.retrieve(since=since, until=until)
         self.check_call('get', url, get_headers, {})
         self.assertIs(delighted.Metrics, type(metrics))
         self.assertEqual(dict(metrics), data)
