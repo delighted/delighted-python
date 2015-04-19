@@ -7,6 +7,7 @@ class TestResource(DelightedTestCase):
         super(TestResource, self).setUp()
 
         delighted.api_key = 'abc123'
+        delighted.api_base_url = 'https://api.delightedapp.com/v1/'
 
     def test_retrieving_metrics(self):
         data = {'nps': 10}
@@ -31,7 +32,7 @@ class TestResource(DelightedTestCase):
         self.assertIs(delighted.Person, type(person))
         self.assertEqual(dict(person), {'email': email})
         self.assertEqual(person.email, email)
-        self.assertEqual('123', person._id)
+        self.assertEqual('123', person.id)
         self.check_call('post', url, post_headers, {'email': email})
 
     def test_unsubscribing_a_person(self):
@@ -64,7 +65,7 @@ class TestResource(DelightedTestCase):
         self.assertEqual({'person': '123', 'score': 10}, dict(survey_response))
         self.assertEqual('123', survey_response.person)
         self.assertEqual(10, survey_response.score)
-        self.assertEqual('456', survey_response._id)
+        self.assertEqual('456', survey_response.id)
         resp = {'person': '123', 'score': 10}
         self.check_call('post', url, post_headers, resp)
 
@@ -82,11 +83,11 @@ class TestResource(DelightedTestCase):
         self.assertIs(delighted.SurveyResponse, type(survey_response))
         self.assertIs(delighted.Person, type(survey_response.person))
         self.assertEqual({'person': '123', 'score': 10}, dict(survey_response))
-        self.assertEqual('123', survey_response.person._id)
+        self.assertEqual('123', survey_response.person.id)
         resp_person = {'email': 'foo@bar.com'}
         self.assertEqual(resp_person, dict(survey_response.person))
         self.assertEqual(10, survey_response.score)
-        self.assertEqual('456', survey_response._id)
+        self.assertEqual('456', survey_response.id)
 
     def test_updating_a_survey_response(self):
         url = 'https://api.delightedapp.com/v1/survey_responses/456'
@@ -105,7 +106,7 @@ class TestResource(DelightedTestCase):
         self.assertEqual(resp, dict(survey_response))
         self.assertEqual('123', survey_response.person)
         self.assertEqual(10, survey_response.score)
-        self.assertEqual('456', survey_response._id)
+        self.assertEqual('456', survey_response.id)
 
     def test_listing_all_survey_responses(self):
         url = 'https://api.delightedapp.com/v1/survey_responses?order=desc'
@@ -119,11 +120,11 @@ class TestResource(DelightedTestCase):
         self.assertIs(delighted.SurveyResponse, type(survey_responses[0]))
         self.assertEqual({'comment': 'One'}, dict(survey_responses[0]))
         self.assertEqual('One', survey_responses[0].comment)
-        self.assertEqual('123', survey_responses[0]._id)
+        self.assertEqual('123', survey_responses[0].id)
         self.assertIs(delighted.SurveyResponse, type(survey_responses[1]))
         self.assertEqual({'comment': 'Two'}, dict(survey_responses[1]))
         self.assertEqual('Two', survey_responses[1].comment)
-        self.assertEqual('456', survey_responses[1]._id)
+        self.assertEqual('456', survey_responses[1].id)
 
     def test_listing_all_survey_responses_expand_person(self):
         url = 'https://api.delightedapp.com/v1/' + \
@@ -141,14 +142,14 @@ class TestResource(DelightedTestCase):
         self.assertIs(delighted.SurveyResponse, type(survey_responses[0]))
         self.assertEqual(resp1, dict(survey_responses[0]))
         self.assertEqual('One', survey_responses[0].comment)
-        self.assertEqual('123', survey_responses[0]._id)
+        self.assertEqual('123', survey_responses[0].id)
         self.assertEqual(delighted.Person, type(survey_responses[0].person))
         self.assertEqual({'email': 'foo@bar.com'}, survey_responses[0].person)
         resp2 = {'person': '123', 'comment': 'Two'}
         self.assertIs(delighted.SurveyResponse, type(survey_responses[1]))
         self.assertEqual(resp2, dict(survey_responses[1]))
         self.assertEqual('One', survey_responses[0].comment)
-        self.assertEqual('123', survey_responses[0]._id)
+        self.assertEqual('123', survey_responses[0].id)
         self.assertEqual(delighted.Person, type(survey_responses[1].person))
         resp2_person = {'email': 'foo@bar.com'}
         self.assertEqual(resp2_person, dict(survey_responses[1].person))

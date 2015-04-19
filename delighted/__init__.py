@@ -16,6 +16,7 @@ def get_shared_client():
     return shared_client
 
 from delighted.client import Client
+from delighted.http_adapter import HTTPAdapter  # noqa
 from delighted.resource import (  # noqa
     Metrics,
     Person,

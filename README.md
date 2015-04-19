@@ -39,27 +39,28 @@ person1 = delighted.Person.create(email='foo+test1@delighted.com')
 person2 = delighted.Person.create(email='foo+test2@delighted.com', delay=60)
 
 # Add a new person, but do not schedule a survey
-person3 = delighted.Person.create(email='foo+test3@delighted.com', send=false)
+person3 = delighted.Person.create(email='foo+test3@delighted.com', send=False)
 
 # Add a new person with full set of attributes, including a custom question
 # product name, and schedule a survey with a 30 second delay
 person4 = delighted.Person.create(
-        email='foo+test4@delighted.com', name='Joe Bloggs',
+        email='foo+test4@delighted.com',
+        name='Joe Bloggs',
         properties={'customer_id': 123, 'country': 'USA',
-                    'question_product_name': 'The London Trench' },
+                    'question_product_name': 'The London Trench'},
         delay=30)
 
 # Update an existing person (identified by email), adding a name, without
 # scheduling a survey
 updated_person1 = delighted.Person.create(email='foo+test1@delighted.com',
-                                          name='James Scott', send=false)
+                                          name='James Scott', send=False)
 ```
 
 Unsubscribing people:
 
 ```python
 # Unsubscribe an existing person
-delighted.unsubscribe.create(person_email='foo+test1@delighted.com')
+delighted.Unsubscribe.create(person_email='foo+test1@delighted.com')
 ```
 
 Deleting pending survey requests
@@ -99,7 +100,7 @@ survey_response4.save
 #=> <delighted.SurveyResponse object at 0xabc123>
 
 # Update (or add) survey response properties
-survey_response4.person_properties = { segment: 'Online' }
+survey_response4.person_properties = {'segment': 'Online'}
 survey_response4.save
 #=> <delighted.SurveyResponse object at 0xabc123>
 
@@ -128,9 +129,9 @@ survey_responses_page1_trend = delighted.SurveyResponse.all(trend='123')
 survey_responses_page1_desc = delighted.SurveyResponse.all(order='desc')
 
 # List all survey responses, 100 per page, page 5, with a time range
-filtered_survey_responses = delighted.SurveyResponse.all(page=5,
-    per_page=100, since=datetime.date(2013, 10, 01),
-    until=datetime.date(2013, 11, 01))
+filtered_survey_responses = delighted.SurveyResponse.all(page=5, per_page=100,
+    since=calendar.timegm(datetime.datetime(2014, 03, 01).timetuple()),
+    until=calendar.timegm(datetime.datetime(2014, 04, 30).timetuple())
 ```
 
 Retrieving metrics:

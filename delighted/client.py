@@ -4,6 +4,13 @@ import urllib
 import urlparse
 
 import delighted
+from delighted.errors import (
+    AuthenticationError,
+    GeneralAPIError,
+    ResourceValidationError,
+    ServiceUnavailableError,
+    UnsupportedFormatRequestedError,
+)
 from delighted.http_adapter import HTTPAdapter
 from delighted.util import query_encode
 
@@ -42,13 +49,12 @@ class Client(object):
     def _handle_response(self, response):
         if response.status_code in (200, 201, 202):
             return json.loads(response.body)
-        if response.status_code is 401:
-            raise delighted.errors.AuthenticationError(response)
-        if response.status_code is 406:
-            raise delighted.errors.UnsupportedFormatRequestedError(response)
-        if response.status_code is 422:
-            raise delighted.errors.ResourceValidationError(response)
-        if response.status_code is 500:
-            raise delighted.errors.GeneralAPIError(response)
-        if response.status_code is 503:
-            raise delighted.errors.ServiceUnavailableError(response)
+        if response.status_code == 401:
+            raise AuthenticationError(response)
+        if response.status_code == 406:
+            raise UnsupportedFormatRequestedError(response)
+        if response.status_code == 422:
+            raise ResourceValidationError(response)
+        if response.status_code == 503:
+            raise ServiceUnavailableError(response)
+        raise GeneralAPIError(response)

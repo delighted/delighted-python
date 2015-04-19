@@ -9,7 +9,7 @@ class Resource(dict):
         super(Resource, self).__init__()
 
         if 'id' in attrs:
-            self._id = attrs['id']
+            object.__setattr__(self, 'id', attrs['id'])
             del attrs['id']
 
         if hasattr(self.__class__, 'expandable_attributes'):
@@ -84,7 +84,7 @@ class UpdateableResource(Resource):
         if hasattr(self.__class__, 'expandable_attributes'):
             expand_attrs = list(self.__class__.expandable_attributes.keys())
             params.update({'expand': expand_attrs})
-        path = '%s/%s' % (self.path, self._id) if self._id else self.path
+        path = '%s/%s' % (self.path, self.id) if self.id else self.path
         j = self.client.request('put', path, {}, dict(self))
         return type(self)(j)
 
