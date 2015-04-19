@@ -3,14 +3,13 @@ import unittest
 
 from mock import Mock, patch
 
-from delighted import __version__ as version
-from delighted.http_response import HTTPResponse
+import delighted
 
 
 get_headers = {
     'Accept': 'application/json',
     'Authorization': 'Basic YWJjMTIz',
-    'User-Agent': "Delighted Python %s" % version
+    'User-Agent': "Delighted Python %s" % delighted.__version__
 }
 post_headers = get_headers.copy()
 post_headers.update({'Content-Type': 'application/json'})
@@ -20,6 +19,9 @@ class DelightedTestCase(unittest.TestCase):
 
     def setUp(self):
         super(DelightedTestCase, self).setUp()
+
+        delighted.api_key = 'abc123'
+        delighted.api_base_url = 'https://api.delightedapp.com/v1/'
 
         self.request_patcher = patch('requests.request')
         self.request_mock = self.request_patcher.start()

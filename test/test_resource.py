@@ -9,9 +9,6 @@ class TestResource(DelightedTestCase):
     def setUp(self):
         super(TestResource, self).setUp()
 
-        delighted.api_key = 'abc123'
-        delighted.api_base_url = 'https://api.delightedapp.com/v1/'
-
     def test_retrieving_metrics(self):
         data = {'nps': 10}
         url = 'https://api.delightedapp.com/v1/metrics'

@@ -159,21 +159,23 @@ delighted.api_base_url # default: 'https://api.delighted.com/v1'
 delighted.http_adapter # default: delighted.HTTPAdapter
 ```
 
-By default, a shared instance of `delighted.client.Client` is created lazily in `delighted.shared_client()`. If you want to create your own client, perhaps for test or if you have multiple API keys, you can:
+By default, a shared instance of `delighted.Client` is created lazily in `delighted.get_shared_client()`. If you want to create your own client, perhaps for test or if you have multiple API keys, you can:
 
 ```python
 # Create an custom client instance, and pass as last argument to resource actions
 import delighted
-from delighted.client import Client
+from delighted import Client
 client = Client(api_key=‘API_KEY',
                 api_base_url=‘https://api.delighted.com/v1',
                 http_adapter=HTTPAdapter())
 metrics_from_custom_client = delighted.Metrics.retrieve(client=client)
 
 # Or, you can set Delighted.shared_client yourself
-delighted.shared_client = delighted.client(api_key='API_KEY',
+delighted.shared_client = delighted.Client(
+    api_key='API_KEY',
     api_base_url='https://api.delighted.com/v1',
-    http_adapter=delighted.HTTPAdapter())
+    http_adapter=delighted.HTTPAdapter()
+)
 metrics_from_custom_shared_client = delighted.Metrics.retrieve()
 ```
 
