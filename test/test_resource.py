@@ -1,4 +1,3 @@
-import calendar
 import datetime
 
 import delighted
@@ -25,11 +24,9 @@ class TestResource(DelightedTestCase):
     def test_retrieving_metrics_range(self):
         data = {'nps': 10}
         self.mock_response(200, {}, data)
-        since = calendar.timegm((datetime.datetime.utcnow() -
-                                datetime.timedelta(days=30)).timetuple())
-        until = calendar.timegm(datetime.datetime.utcnow().timetuple())
-        url = 'https://api.delightedapp.com/v1/metrics?since={}&until={}'
-        url = url.format(since, until)
+        since = datetime.datetime(2015, 03, 01)
+        until = datetime.datetime(2015, 04, 30)
+        url = 'https://api.delightedapp.com/v1/metrics?since=1425196800&until=1430377200'
 
         metrics = delighted.Metrics.retrieve(since=since, until=until)
         self.check_call('get', url, get_headers, {})

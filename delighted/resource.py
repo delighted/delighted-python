@@ -14,7 +14,7 @@ class Resource(dict):
 
         if hasattr(self.__class__, 'expandable_attributes'):
             for attr, klass in self.expandable_attributes.items():
-                if attr in attrs and dict == type(attrs[attr]):
+                if attr in attrs and isinstance(attrs[attr], dict):
                     expandable_attrs = attrs.pop(attr)
                     item_id = expandable_attrs['id']
                     super(Resource, self).__setitem__(attr, item_id)
@@ -37,11 +37,6 @@ class Resource(dict):
             return self[k]
         except KeyError, err:
             raise AttributeError(*err.args)
-
-    def to_dict(self):
-        for attr in dir(self):
-            if not callable(attr) and not attr.startswith("_"):
-                pass
 
     @classmethod
     def _set_client(self, params):

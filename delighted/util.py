@@ -12,7 +12,7 @@ def _encode_datetime(dttime):
     return int(utc_timestamp)
 
 
-def query_encode(data):
+def encode(data):
     for key, value in data.iteritems():
         if value is None:
             continue
@@ -22,7 +22,7 @@ def query_encode(data):
         elif isinstance(value, dict):
             subdict = dict(('%s[%s]' % (key, subkey), subvalue) for
                            subkey, subvalue in value.iteritems())
-            for subkey, subvalue in query_encode(subdict):
+            for subkey, subvalue in encode(subdict):
                 yield (subkey, subvalue)
         elif isinstance(value, datetime.datetime):
             yield (key, _encode_datetime(value))

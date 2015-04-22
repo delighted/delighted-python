@@ -12,7 +12,7 @@ from delighted.errors import (
     UnsupportedFormatRequestedError,
 )
 from delighted.http_adapter import HTTPAdapter
-from delighted.util import query_encode
+from delighted.util import encode
 
 
 class Client(object):
@@ -29,19 +29,22 @@ class Client(object):
         self.http_adapter = http_adapter
 
     def request(self, method, resource, headers={}, params={}):
-        data = json.dumps(params)
-
         headers['Accept'] = 'application/json'
         headers['Authorization'] = 'Basic %s' % (b64encode(delighted.api_key))
         headers['User-Agent'] = "Delighted Python %s" % delighted.__version__
         if method in ('post', 'put', 'delete'):
             headers['Content-Type'] = 'application/json'
 
-        url = "%s%s" % (delighted.api_base_url, resource)
-        if method is 'get' and params != {}:
-            scheme, netloc, path, base_query, fragment = urlparse.urlsplit(url)
-            url += '?' + urllib.urlencode(list(query_encode(params)))
+        url = '%s%s' % (delighted.api_base_url, resource)
+        encoded_params = urllib.urlencode(list(encode(params or {})))
+
+        if method in ('get', 'delete') and params:
+            url_parts = list(urlparse.urlparse(url))
+            url_parts[4] = encoded_params
+            url = urlparse.urlunparse(url_parts)
             data = '{}'
+        else:
+            data = json.dumps(params)
 
         response = self.http_adapter.request(method, url, headers, data)
         return self._handle_response(response)
