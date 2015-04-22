@@ -129,9 +129,10 @@ survey_responses_page1_trend = delighted.SurveyResponse.all(trend='123')
 survey_responses_page1_desc = delighted.SurveyResponse.all(order='desc')
 
 # List all survey responses, 100 per page, page 5, with a time range
-filtered_survey_responses = delighted.SurveyResponse.all(page=5, per_page=100,
-    since=calendar.timegm(datetime.datetime(2014, 03, 01).timetuple()),
-    until=calendar.timegm(datetime.datetime(2014, 04, 30).timetuple())
+filtered_survey_responses = delighted.SurveyResponse.all(page=5,
+    per_page=100,
+    since=datetime.datetime(2014, 03, 01),
+    until=datetime.datetime(2014, 04, 30))
 ```
 
 Retrieving metrics:

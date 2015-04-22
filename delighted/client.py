@@ -35,14 +35,14 @@ class Client(object):
         if method in ('post', 'put', 'delete'):
             headers['Content-Type'] = 'application/json'
 
-        url = '%s%s' % (delighted.api_base_url, resource)
-        encoded_params = urllib.urlencode(list(encode(params or {})))
+        url = urlparse.urljoin(delighted.api_base_url, resource)
 
-        if method in ('get', 'delete') and params:
+        if method == 'get' and params:
+            encoded_params = urllib.urlencode(list(encode(params)))
             url_parts = list(urlparse.urlparse(url))
             url_parts[4] = encoded_params
             url = urlparse.urlunparse(url_parts)
-            data = '{}'
+            data = None
         else:
             data = json.dumps(params)
 

@@ -7,7 +7,11 @@ def _encode_datetime(dttime):
     if dttime.tzinfo and dttime.tzinfo.utcoffset(dttime) is not None:
         utc_timestamp = calendar.timegm(dttime.utctimetuple())
     else:
-        utc_timestamp = time.mktime(dttime.timetuple())
+        time_tuple = dttime.timetuple()
+        if len(time_tuple) == 6:
+            time_tuple += (0, 0, 0)
+        epoch = time.mktime((1970, 1, 1, 0, 0, 0, 0, 0, 0))
+        utc_timestamp = time.mktime(time_tuple) - epoch
 
     return int(utc_timestamp)
 

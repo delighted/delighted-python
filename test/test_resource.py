@@ -26,10 +26,11 @@ class TestResource(DelightedTestCase):
         self.mock_response(200, {}, data)
         since = datetime.datetime(2015, 03, 01)
         until = datetime.datetime(2015, 04, 30)
-        url = 'https://api.delightedapp.com/v1/metrics?since=1425196800&until=1430377200'
+        url = 'https://api.delightedapp.com/v1/metrics' + \
+              '?since=1425168000&until=1430348400'
 
         metrics = delighted.Metrics.retrieve(since=since, until=until)
-        self.check_call('get', url, get_headers, {})
+        self.check_call('get', url, get_headers, None)
         self.assertIs(delighted.Metrics, type(metrics))
         self.assertEqual(dict(metrics), data)
         self.assertEqual(metrics.nps, 10)
@@ -93,7 +94,7 @@ class TestResource(DelightedTestCase):
 
         survey_response = delighted.SurveyResponse.retrieve('456',
                                                             expand=['person'])
-        self.check_call('get', url, get_headers, {})
+        self.check_call('get', url, get_headers, None)
         self.assertIs(delighted.SurveyResponse, type(survey_response))
         self.assertIs(delighted.Person, type(survey_response.person))
         self.assertEqual({'person': '123', 'score': 10}, dict(survey_response))
@@ -106,7 +107,6 @@ class TestResource(DelightedTestCase):
     def test_updating_a_survey_response(self):
         url = 'https://api.delightedapp.com/v1/survey_responses/456'
         data = {'person': '123', 'score': 10}
-        # self.mock_response(200, {}, data.update({'id': '456'}))
         resp = {'id': '456', 'person': '123', 'score': 10}
         self.mock_response(200, {}, resp)
 
@@ -129,7 +129,7 @@ class TestResource(DelightedTestCase):
         self.mock_response(200, {}, [resp1, resp2])
 
         survey_responses = delighted.SurveyResponse.all(order='desc')
-        self.check_call('get', url, get_headers, {})
+        self.check_call('get', url, get_headers, None)
         self.assertIs(list, type(survey_responses))
         self.assertIs(delighted.SurveyResponse, type(survey_responses[0]))
         self.assertEqual({'comment': 'One'}, dict(survey_responses[0]))
@@ -151,7 +151,7 @@ class TestResource(DelightedTestCase):
 
         survey_responses = delighted.SurveyResponse.all(expand=['person'])
         resp1 = {'person': '123', 'comment': 'One'}
-        self.check_call('get', url, get_headers, {})
+        self.check_call('get', url, get_headers, None)
         self.assertIs(list, type(survey_responses))
         self.assertIs(delighted.SurveyResponse, type(survey_responses[0]))
         self.assertEqual(resp1, dict(survey_responses[0]))

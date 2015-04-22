@@ -44,6 +44,8 @@ class DelightedTestCase(unittest.TestCase):
         mock.request.side_effect = mock.exceptions.RequestException()
 
     def check_call(self, meth, url, headers, post_data):
+        if post_data is not None:
+            post_data = json.dumps(post_data)
         self.request_mock.assert_called_once_with(meth, url,
                                                   headers=headers,
-                                                  data=json.dumps(post_data))
+                                                  data=post_data)
