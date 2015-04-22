@@ -97,17 +97,17 @@ Updating survey responses:
 survey_response4 = delighted.SurveyResponse.retrieve('234')
 survey_response4.score = 10
 survey_response4.save
-#=> <delighted.SurveyResponse object at 0xabc123>
+# <delighted.SurveyResponse object at 0xabc123>
 
 # Update (or add) survey response properties
 survey_response4.person_properties = {'segment': 'Online'}
 survey_response4.save
-#=> <delighted.SurveyResponse object at 0xabc123>
+# <delighted.SurveyResponse object at 0xabc123>
 
 # Update person who recorded the survey response
 survey_response4.person = '321'
 survey_response4.save
-#=> <delighted.SurveyResponse object at 0xabc123>
+# <delighted.SurveyResponse object at 0xabc123>
 ```
 
 Listing survey responses:
@@ -120,7 +120,7 @@ survey_responses_page2 = delighted.SurveyResponse.all(page=2)
 # List all survey responses, 20 per page, expanding person object
 survey_responses_page1_expanded = delighted.SurveyResponse.all(expand=['person'])
 survey_responses_page1_expanded[0].person
-#=> <delighted.Person object at 0xabc123>
+# <delighted.Person object at 0xabc123>
 
 # List all survey responses, 20 per page, for a specific trend (ID: 123)
 survey_responses_page1_trend = delighted.SurveyResponse.all(trend='123')
