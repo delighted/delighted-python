@@ -1,4 +1,4 @@
-# Delighted API Python Client
+# Delighted API Python Client (Beta)
 
 Official Python client for the [Delighted API](https://delighted.com/docs/api).
 
