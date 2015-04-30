@@ -1,3 +1,5 @@
+[![Build Status](https://img.shields.io/travis/delighted/delighted-python.svg)](https://travis-ci.org/delighted/delighted-python)
+
 # Delighted API Python Client (Beta)
 
 Official Python client for the [Delighted API](https://delighted.com/docs/api).
