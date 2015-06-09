@@ -57,6 +57,8 @@ class SurveyResponse(object):
             page=None,
             since=None,
             until=None,
+            updated_since=None,
+            updated_until=None,
             trend=None,
             person_email=None,
             order=None,
@@ -111,6 +113,12 @@ class SurveyResponse(object):
 
         if until is not None:
             _params['until'] = until
+
+        if updated_since is not None:
+            _params['updated_since'] = updated_since
+
+        if updated_until is not None:
+            _params['updated_until'] = updated_until
 
         if trend is not None:
             _params['trend'] = trend
