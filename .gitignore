@@ -1,7 +1,7 @@
 /build
 /dist
 /MANIFEST
-/delighted.egg-info
+*.egg-info
 *.pyc
 *.egg
 *.class
@@ -14,3 +14,4 @@ nosetests.xml
 coverage.xml
 
 .python-version
+setup.cfg
