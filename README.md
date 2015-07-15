@@ -7,13 +7,13 @@ Official Python client for the [Delighted API](https://delighted.com/docs/api).
 ## Installation
 
 ```
-pip install --upgrade delighted
+pip install --upgrade delighted-python
 ```
 
 or
 
 ```
-easy_install --upgrade delighted
+easy_install --upgrade delighted-python
 ```
 
 ## Configuration

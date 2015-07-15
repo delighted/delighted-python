@@ -1,5 +1,5 @@
 __title__ = 'delighted'
-__version__ = '0.1.0'
+__version__ = '1.0.0-beta'
 __author__ = 'Robby Colvin'
 __license__ = 'MIT'
 

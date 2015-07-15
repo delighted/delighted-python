@@ -13,7 +13,7 @@ if not version:
     raise RuntimeError('Cannot find version information')
 
 setup(
-    name='delighted',
+    name='delighted-python',
     version=version,
     description='Delighted API Python Client.',
     long_description=open('README.md').read(),
