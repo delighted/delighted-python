@@ -29,18 +29,18 @@ setup(
     classifiers=(
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
-        'gLicense :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        'gOperating System :: OS Independent',
+        'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'gProgramming Language :: Python :: 2',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'gProgramming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4'
-        'gProgramming Language :: Python :: Implementation :: PyPy',
-        'gTopic :: Software Development :: Libraries :: Python Modules'
+        'Programming Language :: Python :: Implementation :: PyPy',
+        'Topic :: Software Development :: Libraries :: Python Modules'
     ),
 )
