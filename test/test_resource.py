@@ -167,3 +167,25 @@ class TestResource(DelightedTestCase):
         self.assertEqual(delighted.Person, type(survey_responses[1].person))
         resp2_person = {'email': 'foo@bar.com'}
         self.assertEqual(resp2_person, dict(survey_responses[1].person))
+
+    def test_listing_all_unsubscribes(self):
+        url = 'https://api.delightedapp.com/v1/unsubscribes'
+        resp1 = {'person_id': '123', 'email': 'foo@bar.com', 'name': 'Foo', 'unsubscribed_at': 1440621400}
+        self.mock_response(200, {}, [resp1])
+
+        unsubscribes = delighted.Unsubscribe.all()
+        self.check_call('get', url, get_headers, {})
+        self.assertIs(list, type(unsubscribes))
+        self.assertIs(delighted.Unsubscribe, type(unsubscribes[0]))
+        self.assertEqual(resp1, dict(unsubscribes[0]))
+
+    def test_listing_all_bounces(self):
+        url = 'https://api.delightedapp.com/v1/bounces'
+        resp1 = {'person_id': '123', 'email': 'foo@bar.com', 'name': 'Foo', 'bounced_at': 1440621400}
+        self.mock_response(200, {}, [resp1])
+
+        bounces = delighted.Bounce.all()
+        self.check_call('get', url, get_headers, {})
+        self.assertIs(list, type(bounces))
+        self.assertIs(delighted.Bounce, type(bounces[0]))
+        self.assertEqual(resp1, dict(bounces[0]))
