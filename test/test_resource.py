@@ -1,5 +1,3 @@
-import datetime
-
 import delighted
 from . import get_headers, post_headers, DelightedTestCase
 
@@ -24,8 +22,8 @@ class TestResource(DelightedTestCase):
     def test_retrieving_metrics_range(self):
         data = {'nps': 10}
         self.mock_response(200, {}, data)
-        since = datetime.datetime(2015, 03, 01)
-        until = datetime.datetime(2015, 04, 30)
+        since = 1425168000
+        until = 1430348400
         url = 'https://api.delightedapp.com/v1/metrics' + \
               '?since=1425168000&until=1430348400'
 
