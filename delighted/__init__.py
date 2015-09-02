@@ -23,4 +23,5 @@ from delighted.resource import (  # noqa
     SurveyRequest,
     SurveyResponse,
     Unsubscribe,
+    Bounce,
 )

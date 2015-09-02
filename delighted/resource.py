@@ -115,5 +115,8 @@ class SurveyResponse(AllResource, CreateableResource,
     path = 'survey_responses'
 
 
-class Unsubscribe(CreateableResource):
+class Unsubscribe(AllResource, CreateableResource):
     path = 'unsubscribes'
+
+class Bounce(AllResource):
+    path = 'bounces'
