@@ -194,3 +194,7 @@ metrics_from_custom_shared_client = delighted.Metrics.retrieve()
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+## Author
+
+Originally by [Jason Pearson](https://github.com/kaeawc). Graciously transfered and now officially maintained by Delighted.
