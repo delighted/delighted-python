@@ -22,7 +22,7 @@ setup(
     url='https://delighted.com/',
     packages=['delighted'],
     package_dir={'delighted': 'delighted'},
-    install_requires=['requests'],
+    install_requires=['six', 'requests'],
     test_suite='test',
     test_requires=['mock'],
     license='MIT',

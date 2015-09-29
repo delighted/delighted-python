@@ -1,4 +1,5 @@
-from urllib import quote
+import six
+from six.moves.urllib_parse import quote
 
 from delighted import get_shared_client
 
@@ -13,14 +14,14 @@ class Resource(dict):
             del attrs['id']
 
         if hasattr(self.__class__, 'expandable_attributes'):
-            for attr, klass in self.expandable_attributes.items():
+            for attr, klass in six.iteritems(self.expandable_attributes):
                 if attr in attrs and isinstance(attrs[attr], dict):
                     expandable_attrs = attrs.pop(attr)
                     item_id = expandable_attrs['id']
                     super(Resource, self).__setitem__(attr, item_id)
                     object.__setattr__(self, attr, klass(expandable_attrs))
 
-        for k, v in attrs.iteritems():
+        for k, v in six.iteritems(attrs):
             super(Resource, self).__setitem__(k, v)
 
     def __setattr__(self, k, v):
@@ -35,7 +36,7 @@ class Resource(dict):
 
         try:
             return self[k]
-        except KeyError, err:
+        except KeyError as err:
             raise AttributeError(*err.args)
 
     @classmethod

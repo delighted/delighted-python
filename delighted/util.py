@@ -2,6 +2,8 @@ import calendar
 import datetime
 import time
 
+import six
+
 
 def _encode_datetime(dttime):
     if dttime.tzinfo and dttime.tzinfo.utcoffset(dttime) is not None:
@@ -17,7 +19,7 @@ def _encode_datetime(dttime):
 
 
 def encode(data):
-    for key, value in data.iteritems():
+    for key, value in six.iteritems(data):
         if value is None:
             continue
         elif isinstance(value, list) or isinstance(value, tuple):
@@ -25,7 +27,7 @@ def encode(data):
                 yield ("%s[]" % (key,), subvalue)
         elif isinstance(value, dict):
             subdict = dict(('%s[%s]' % (key, subkey), subvalue) for
-                           subkey, subvalue in value.iteritems())
+                           subkey, subvalue in six.iteritems(value))
             for subkey, subvalue in encode(subdict):
                 yield (subkey, subvalue)
         elif isinstance(value, datetime.datetime):

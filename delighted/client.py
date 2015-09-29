@@ -1,6 +1,7 @@
 from base64 import b64encode
 import json
-import urlparse
+from six import b
+from six.moves.urllib_parse import urljoin
 
 import delighted
 from delighted.errors import (
@@ -29,12 +30,13 @@ class Client(object):
 
     def request(self, method, resource, headers={}, params={}):
         headers['Accept'] = 'application/json'
-        headers['Authorization'] = 'Basic %s' % (b64encode(delighted.api_key))
+        headers['Authorization'] = 'Basic %s' % \
+            (b64encode(b(delighted.api_key)).decode('ascii'))
         headers['User-Agent'] = "Delighted Python %s" % delighted.__version__
         if method in ('post', 'put', 'delete'):
             headers['Content-Type'] = 'application/json'
 
-        url = urlparse.urljoin(delighted.api_base_url, resource)
+        url = urljoin(delighted.api_base_url, resource)
 
         if method == 'get' and params:
             params = dict((key, value) for (key, value) in encode(params))
