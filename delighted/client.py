@@ -1,6 +1,5 @@
 from base64 import b64encode
 import json
-import urllib
 import urlparse
 
 import delighted
@@ -44,7 +43,8 @@ class Client(object):
             data = json.dumps(params)
             params = None
 
-        response = self.http_adapter.request(method, url, headers, data, params)
+        response = self.http_adapter.request(method, url, headers, data,
+                                             params)
         return self._handle_response(response)
 
     def _handle_response(self, response):
