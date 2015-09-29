@@ -7,14 +7,18 @@ Official Python client for the [Delighted API](https://delighted.com/docs/api).
 ## Installation
 
 ```
-pip install --upgrade delighted-python
+pip install --upgrade delighted
 ```
 
 or
 
 ```
-easy_install --upgrade delighted-python
+easy_install --upgrade delighted
 ```
+
+### Upgrading from delighted-python
+
+If you previously used the python package named `delighted-python`, please note that the package name is now just `delighted`.
 
 ## Configuration
 
@@ -63,6 +67,22 @@ Unsubscribing people:
 ```python
 # Unsubscribe an existing person
 delighted.Unsubscribe.create(person_email='foo+test1@delighted.com')
+```
+
+Listing people who have unsubscribed:
+
+```python
+# List all people who have unsubscribed, 20 per page, first 2 pages
+delighted.Unsubscribe.all
+delighted.Unsubscribe.all(page=2)
+```
+
+Listing people whose emails have bounced:
+
+```python
+# List all people whose emails have bounced, 20 per page, first 2 pages
+delighted.Bounce.all
+delighted.Bounce.all(page=2)
 ```
 
 Deleting pending survey requests
@@ -168,8 +188,8 @@ By default, a shared instance of `delighted.Client` is created lazily in `deligh
 # Create an custom client instance, and pass as last argument to resource actions
 import delighted
 from delighted import Client
-client = Client(api_key=‘API_KEY',
-                api_base_url=‘https://api.delighted.com/v1',
+client = Client(api_key='API_KEY',
+                api_base_url='https://api.delighted.com/v1',
                 http_adapter=HTTPAdapter())
 metrics_from_custom_client = delighted.Metrics.retrieve(client=client)
 
@@ -191,9 +211,10 @@ metrics_from_custom_shared_client = delighted.Metrics.retrieve()
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+3. Run the tests (`python -W always setup.py test`)
+4. Commit your changes (`git commit -am 'Add some feature'`)
+5. Push to the branch (`git push origin my-new-feature`)
+6. Create new Pull Request
 
 ## Author
 

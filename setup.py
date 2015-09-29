@@ -13,12 +13,12 @@ if not version:
     raise RuntimeError('Cannot find version information')
 
 setup(
-    name='delighted-python',
+    name='delighted',
     version=version,
     description='Delighted API Python Client.',
     long_description=open('README.md').read(),
-    author='Robby Colvin',
-    author_email='geetarista@gmail.com',
+    author='Ben Turner, Robby Colvin',
+    author_email='ben@delighted.com',
     url='https://delighted.com/',
     packages=['delighted'],
     package_dir={'delighted': 'delighted'},
@@ -27,7 +27,7 @@ setup(
     test_requires=['mock'],
     license='MIT',
     classifiers=(
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
