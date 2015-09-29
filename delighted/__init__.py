@@ -1,6 +1,6 @@
 __title__ = 'delighted'
-__version__ = '1.0.0-beta'
-__author__ = 'Robby Colvin'
+__version__ = '1.1.0'
+__author__ = 'Ben Turner'
 __license__ = 'MIT'
 
 api_key = None
