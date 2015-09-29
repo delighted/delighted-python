@@ -12,7 +12,7 @@ class TestResource(DelightedTestCase):
         self.mock_response(200, {}, data)
 
         metrics = delighted.Metrics.retrieve()
-        self.check_call('get', url, get_headers, {})
+        self.check_call('get', url, get_headers, {}, None)
         self.assertIs(delighted.Metrics, type(metrics))
         self.assertEqual(dict(metrics), data)
         self.assertEqual(metrics.nps, 10)
@@ -24,11 +24,11 @@ class TestResource(DelightedTestCase):
         self.mock_response(200, {}, data)
         since = 1425168000
         until = 1430348400
-        url = 'https://api.delightedapp.com/v1/metrics' + \
-              '?since=1425168000&until=1430348400'
+        url = 'https://api.delightedapp.com/v1/metrics'
 
         metrics = delighted.Metrics.retrieve(since=since, until=until)
-        self.check_call('get', url, get_headers, None)
+        self.check_call('get', url, get_headers, None, \
+            {'since': 1425168000, 'until': 1430348400})
         self.assertIs(delighted.Metrics, type(metrics))
         self.assertEqual(dict(metrics), data)
         self.assertEqual(metrics.nps, 10)
@@ -46,7 +46,7 @@ class TestResource(DelightedTestCase):
         self.assertEqual(dict(person), {'email': email})
         self.assertEqual(person.email, email)
         self.assertEqual('123', person.id)
-        self.check_call('post', url, post_headers, {'email': email})
+        self.check_call('post', url, post_headers, {'email': email}, None)
 
     def test_unsubscribing_a_person(self):
         email = 'person@example.com'
@@ -55,7 +55,7 @@ class TestResource(DelightedTestCase):
         self.mock_response(200, {}, {'ok': True})
 
         delighted.Unsubscribe.create(person_email=email)
-        self.check_call('post', url, post_headers, data)
+        self.check_call('post', url, post_headers, data, None)
 
     def test_deleting_pending_survey_requests_for_a_person(self):
         email = 'foo@bar.com'
@@ -66,7 +66,7 @@ class TestResource(DelightedTestCase):
         result = delighted.SurveyRequest.delete_pending(person_email=email)
         self.assertIs(dict, type(result))
         self.assertEqual({'ok': True}, result)
-        self.check_call('delete', url, post_headers, {})
+        self.check_call('delete', url, post_headers, {}, None)
 
     def test_creating_a_survey_response(self):
         url = 'https://api.delightedapp.com/v1/survey_responses'
@@ -80,11 +80,10 @@ class TestResource(DelightedTestCase):
         self.assertEqual(10, survey_response.score)
         self.assertEqual('456', survey_response.id)
         resp = {'person': '123', 'score': 10}
-        self.check_call('post', url, post_headers, resp)
+        self.check_call('post', url, post_headers, resp, None)
 
     def test_retrieving_a_survey_response_expand_person(self):
-        url = 'https://api.delightedapp.com/v1/survey_responses/456' + \
-              '?expand%5B%5D=person'
+        url = 'https://api.delightedapp.com/v1/survey_responses/456'
         data = {'id': '456',
                 'person': {'id': '123', 'email': 'foo@bar.com'},
                 'score': 10}
@@ -92,7 +91,7 @@ class TestResource(DelightedTestCase):
 
         survey_response = delighted.SurveyResponse.retrieve('456',
                                                             expand=['person'])
-        self.check_call('get', url, get_headers, None)
+        self.check_call('get', url, get_headers, None, {'expand[]': 'person'})
         self.assertIs(delighted.SurveyResponse, type(survey_response))
         self.assertIs(delighted.Person, type(survey_response.person))
         self.assertEqual({'person': '123', 'score': 10}, dict(survey_response))
@@ -113,7 +112,7 @@ class TestResource(DelightedTestCase):
         survey_response.person = '123'
         survey_response.score = 10
         self.assertIs(delighted.SurveyResponse, type(survey_response.save()))
-        self.check_call('put', url, post_headers, data)
+        self.check_call('put', url, post_headers, data, None)
         resp = {'person': '123', 'score': 10}
         self.assertEqual(resp, dict(survey_response))
         self.assertEqual('123', survey_response.person)
@@ -121,13 +120,13 @@ class TestResource(DelightedTestCase):
         self.assertEqual('456', survey_response.id)
 
     def test_listing_all_survey_responses(self):
-        url = 'https://api.delightedapp.com/v1/survey_responses?order=desc'
+        url = 'https://api.delightedapp.com/v1/survey_responses'
         resp1 = {'id': '123', 'comment': 'One'}
         resp2 = {'id': '456', 'comment': 'Two'}
         self.mock_response(200, {}, [resp1, resp2])
 
         survey_responses = delighted.SurveyResponse.all(order='desc')
-        self.check_call('get', url, get_headers, None)
+        self.check_call('get', url, get_headers, None, {'order': 'desc'})
         self.assertIs(list, type(survey_responses))
         self.assertIs(delighted.SurveyResponse, type(survey_responses[0]))
         self.assertEqual({'comment': 'One'}, dict(survey_responses[0]))
@@ -139,8 +138,7 @@ class TestResource(DelightedTestCase):
         self.assertEqual('456', survey_responses[1].id)
 
     def test_listing_all_survey_responses_expand_person(self):
-        url = 'https://api.delightedapp.com/v1/' + \
-              'survey_responses?expand%5B%5D=person'
+        url = 'https://api.delightedapp.com/v1/survey_responses'
         resp1 = {'id': '123', 'comment': 'One',
                  'person': {'id': '123', 'email': 'foo@bar.com'}}
         resp2 = {'id': '456', 'comment': 'Two',
@@ -149,7 +147,7 @@ class TestResource(DelightedTestCase):
 
         survey_responses = delighted.SurveyResponse.all(expand=['person'])
         resp1 = {'person': '123', 'comment': 'One'}
-        self.check_call('get', url, get_headers, None)
+        self.check_call('get', url, get_headers, None, {'expand[]': 'person'})
         self.assertIs(list, type(survey_responses))
         self.assertIs(delighted.SurveyResponse, type(survey_responses[0]))
         self.assertEqual(resp1, dict(survey_responses[0]))
@@ -172,7 +170,7 @@ class TestResource(DelightedTestCase):
         self.mock_response(200, {}, [resp1])
 
         unsubscribes = delighted.Unsubscribe.all()
-        self.check_call('get', url, get_headers, {})
+        self.check_call('get', url, get_headers, {}, None)
         self.assertIs(list, type(unsubscribes))
         self.assertIs(delighted.Unsubscribe, type(unsubscribes[0]))
         self.assertEqual(resp1, dict(unsubscribes[0]))
@@ -183,7 +181,7 @@ class TestResource(DelightedTestCase):
         self.mock_response(200, {}, [resp1])
 
         bounces = delighted.Bounce.all()
-        self.check_call('get', url, get_headers, {})
+        self.check_call('get', url, get_headers, {}, None)
         self.assertIs(list, type(bounces))
         self.assertIs(delighted.Bounce, type(bounces[0]))
         self.assertEqual(resp1, dict(bounces[0]))
