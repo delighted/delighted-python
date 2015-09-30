@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/delighted/delighted-python.svg)](https://travis-ci.org/delighted/delighted-python)
+[![Build Status](https://travis-ci.org/delighted/delighted-python.svg?branch=master)](https://travis-ci.org/delighted/delighted-python)
 
 # Delighted API Python Client
 
