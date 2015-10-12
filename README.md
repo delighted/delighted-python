@@ -73,7 +73,7 @@ Listing people who have unsubscribed:
 
 ```python
 # List all people who have unsubscribed, 20 per page, first 2 pages
-delighted.Unsubscribe.all
+delighted.Unsubscribe.all()
 delighted.Unsubscribe.all(page=2)
 ```
 
@@ -81,7 +81,7 @@ Listing people whose emails have bounced:
 
 ```python
 # List all people whose emails have bounced, 20 per page, first 2 pages
-delighted.Bounce.all
+delighted.Bounce.all()
 delighted.Bounce.all(page=2)
 ```
 
@@ -136,7 +136,7 @@ Listing survey responses:
 
 ```python
 # List all survey responses, 20 per page, first 2 pages
-survey_responses_page1 = delighted.SurveyResponse.all
+survey_responses_page1 = delighted.SurveyResponse.all()
 survey_responses_page2 = delighted.SurveyResponse.all(page=2)
 
 # List all survey responses, 20 per page, expanding person object
@@ -161,7 +161,7 @@ Retrieving metrics:
 
 ```python
 # Get current metrics, 30-day simple moving average, from most recent response
-metrics = delighted.Metrics.retrieve
+metrics = delighted.Metrics.retrieve()
 
 # Get current metrics, 30-day simple moving average, from most recent response,
 # for a specific trend (ID: 123)
@@ -178,7 +178,7 @@ The following options are configurable for the client:
 
 ```python
 delighted.api_key
-delighted.api_base_url # default: 'https://api.delighted.com/v1'
+delighted.api_base_url # default: 'https://api.delighted.com/v1/'
 delighted.http_adapter # default: delighted.HTTPAdapter
 ```
 
@@ -189,14 +189,14 @@ By default, a shared instance of `delighted.Client` is created lazily in `deligh
 import delighted
 from delighted import Client
 client = Client(api_key='API_KEY',
-                api_base_url='https://api.delighted.com/v1',
+                api_base_url='https://api.delighted.com/v1/',
                 http_adapter=HTTPAdapter())
 metrics_from_custom_client = delighted.Metrics.retrieve(client=client)
 
 # Or, you can set Delighted.shared_client yourself
 delighted.shared_client = delighted.Client(
     api_key='API_KEY',
-    api_base_url='https://api.delighted.com/v1',
+    api_base_url='https://api.delighted.com/v1/',
     http_adapter=delighted.HTTPAdapter()
 )
 metrics_from_custom_shared_client = delighted.Metrics.retrieve()
