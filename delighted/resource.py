@@ -41,10 +41,7 @@ class Resource(dict):
 
     @classmethod
     def _set_client(self, params):
-        if 'client' in params:
-            self.client = params['client']
-        else:
-            self.client = get_shared_client()
+        self.client = params.pop('client', None) or get_shared_client()
 
 
 class AllResource(Resource):

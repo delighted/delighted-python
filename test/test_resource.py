@@ -6,17 +6,28 @@ class TestResource(DelightedTestCase):
     def setUp(self):
         super(TestResource, self).setUp()
 
-    def test_retrieving_metrics(self):
+    def check_retrieving_metrics(self, client=None):
         data = {'nps': 10}
         url = 'https://api.delightedapp.com/v1/metrics'
         self.mock_response(200, {}, data)
 
-        metrics = delighted.Metrics.retrieve()
+        retrieve_kwargs = {}
+        if client:
+            retrieve_kwargs['client'] = client
+
+        metrics = delighted.Metrics.retrieve(**retrieve_kwargs)
         self.check_call('get', url, get_headers, {}, None)
         self.assertTrue(delighted.Metrics is type(metrics))
         self.assertEqual(dict(metrics), data)
         self.assertEqual(metrics.nps, 10)
         self.assertRaises(AttributeError, lambda: metrics.id)
+
+    def test_retrieving_metrics(self):
+        self.check_retrieving_metrics()
+
+    def test_retrieving_metrics_other_client(self):
+        client = delighted.Client(api_key='example')
+        self.check_retrieving_metrics(client=client)
 
     def test_retrieving_metrics_range(self):
         data = {'nps': 10}
@@ -33,18 +44,29 @@ class TestResource(DelightedTestCase):
         self.assertEqual(metrics.nps, 10)
         self.assertRaises(AttributeError, lambda: metrics.id)
 
-    def test_creating_or_updating_a_person(self):
+    def check_creating_or_updating_a_person(self, client=None):
         email = 'foo@bar.com'
         data = {'id': '123', 'email': email}
         url = 'https://api.delightedapp.com/v1/people'
         self.mock_response(200, {}, data)
 
-        person = delighted.Person.create(email=email)
+        create_kwargs = {'email': email}
+        if client:
+            create_kwargs['client'] = client
+
+        person = delighted.Person.create(**create_kwargs)
         self.assertTrue(delighted.Person is type(person))
         self.assertEqual(dict(person), {'email': email})
         self.assertEqual(person.email, email)
         self.assertEqual('123', person.id)
         self.check_call('post', url, post_headers, {'email': email}, None)
+
+    def test_creating_or_updating_a_person(self):
+        self.check_creating_or_updating_a_person()
+
+    def test_creating_or_updating_a_person_other_client(self):
+        client = delighted.Client(api_key='example')
+        self.check_creating_or_updating_a_person(client=client)
 
     def test_unsubscribing_a_person(self):
         email = 'person@example.com'
