@@ -1,3 +1,9 @@
+## 1.1.1 (Unreleased)
+
+Bugfixes:
+
+- Fix use of alternate client with POST requests
+
 ## 1.1.0 (2015-09-29)
 
 Features:
