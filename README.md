@@ -204,8 +204,7 @@ metrics_from_custom_shared_client = delighted.Metrics.retrieve()
 
 ## Supported versions
 
-- 2.6, 2.7, 3.2, 3.3, 3.4
-- pypy, pypy3
+- 2.6+, 3.3+ (PyPy supported)
 
 ## Contributing
 

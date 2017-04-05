@@ -1,3 +1,13 @@
+## 2.0.0.rc1 (Unreleased)
+
+Breaking:
+
+- Drops explicit support for 3.2
+
+Features:
+
+- Adds explicit support for 3.5 and 3.6.
+
 ## 1.1.1.rc1 (2017-04-05)
 
 Bugfixes:
