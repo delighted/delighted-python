@@ -10,10 +10,10 @@ python:
   - "pypy"
   - "pypy3"
 install:
-  - pip install "flake8 >=2.0, <3.0" mock --use-mirrors
+  - pip install "flake8" mock --use-mirrors
   - python setup.py install
 script:
-  - if [[ $TRAVIS_PYTHON_VERSION == "2.6" ]]; then flake8 stripe; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == "2.7" ]]; then flake8 stripe; fi
   - python -W always setup.py test
 matrix:
   allow_failures:
