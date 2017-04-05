@@ -1,6 +1,7 @@
 import delighted
 from . import get_headers, post_headers, DelightedTestCase
-
+from base64 import b64encode
+from six import b
 
 class TestResource(DelightedTestCase):
     def setUp(self):
@@ -11,12 +12,14 @@ class TestResource(DelightedTestCase):
         url = 'https://api.delightedapp.com/v1/metrics'
         self.mock_response(200, {}, data)
 
+        headers = get_headers.copy()
         retrieve_kwargs = {}
         if client:
             retrieve_kwargs['client'] = client
+            headers['Authorization'] = 'Basic %s' % b64encode(b(client.api_key)).decode('ascii')
 
         metrics = delighted.Metrics.retrieve(**retrieve_kwargs)
-        self.check_call('get', url, get_headers, {}, None)
+        self.check_call('get', url, headers, {}, None)
         self.assertTrue(delighted.Metrics is type(metrics))
         self.assertEqual(dict(metrics), data)
         self.assertEqual(metrics.nps, 10)
