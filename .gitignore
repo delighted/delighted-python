@@ -5,6 +5,7 @@
 *.pyc
 *.egg
 *.class
+.eggs
 
 # Unit test / coverage reports
 .tox/
