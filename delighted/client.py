@@ -11,32 +11,30 @@ from delighted.errors import (
     ServiceUnavailableError,
     UnsupportedFormatRequestedError,
 )
-from delighted.http_adapter import HTTPAdapter
 from delighted.util import encode
 
 
 class Client(object):
 
-    def __init__(self, api_key=None, api_base_url=delighted.api_base_url,
-                 http_adapter=HTTPAdapter()):
-        if api_key is None:
+    def __init__(self, api_key=None, api_base_url=None, http_adapter=None):
+        self.api_key = api_key or delighted.api_key
+        self.api_base_url = api_base_url or delighted.api_base_url
+        self.http_adapter = http_adapter or delighted.http_adapter
+
+        if self.api_key is None:
             raise ValueError("You must provide an API key by setting " +
                              "delighted.api_key = '123abc' or passing " +
                              "api_key='abc123' when instantiating client.")
 
-        self.api_key = api_key
-        self.api_base_url = api_base_url
-        self.http_adapter = http_adapter
-
     def request(self, method, resource, headers={}, params={}):
         headers['Accept'] = 'application/json'
         headers['Authorization'] = 'Basic %s' % \
-            (b64encode(b(delighted.api_key)).decode('ascii'))
+            (b64encode(b(self.api_key)).decode('ascii'))
         headers['User-Agent'] = "Delighted Python %s" % delighted.__version__
         if method in ('post', 'put', 'delete'):
             headers['Content-Type'] = 'application/json'
 
-        url = urljoin(delighted.api_base_url, resource)
+        url = urljoin(self.api_base_url, resource)
 
         if method == 'get' and params:
             params = dict((key, value) for (key, value) in encode(params))

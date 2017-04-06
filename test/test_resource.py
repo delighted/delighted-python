@@ -1,6 +1,7 @@
 import delighted
 from . import get_headers, post_headers, DelightedTestCase
-
+from base64 import b64encode
+from six import b
 
 class TestResource(DelightedTestCase):
     def setUp(self):
@@ -11,12 +12,14 @@ class TestResource(DelightedTestCase):
         url = 'https://api.delightedapp.com/v1/metrics'
         self.mock_response(200, {}, data)
 
+        expected_headers = get_headers.copy()
         retrieve_kwargs = {}
         if client:
             retrieve_kwargs['client'] = client
+            expected_headers['Authorization'] = 'Basic %s' % b64encode(b(client.api_key)).decode('ascii')
 
         metrics = delighted.Metrics.retrieve(**retrieve_kwargs)
-        self.check_call('get', url, get_headers, {}, None)
+        self.check_call('get', url, expected_headers, {}, None)
         self.assertTrue(delighted.Metrics is type(metrics))
         self.assertEqual(dict(metrics), data)
         self.assertEqual(metrics.nps, 10)
@@ -50,16 +53,18 @@ class TestResource(DelightedTestCase):
         url = 'https://api.delightedapp.com/v1/people'
         self.mock_response(200, {}, data)
 
+        expected_headers = post_headers.copy()
         create_kwargs = {'email': email}
         if client:
             create_kwargs['client'] = client
+            expected_headers['Authorization'] = 'Basic %s' % b64encode(b(client.api_key)).decode('ascii')
 
         person = delighted.Person.create(**create_kwargs)
         self.assertTrue(delighted.Person is type(person))
         self.assertEqual(dict(person), {'email': email})
         self.assertEqual(person.email, email)
         self.assertEqual('123', person.id)
-        self.check_call('post', url, post_headers, {'email': email}, None)
+        self.check_call('post', url, expected_headers, {'email': email}, None)
 
     def test_creating_or_updating_a_person(self):
         self.check_creating_or_updating_a_person()
