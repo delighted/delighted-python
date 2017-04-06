@@ -22,9 +22,9 @@ setup(
     url='https://delighted.com/',
     packages=['delighted'],
     package_dir={'delighted': 'delighted'},
-    install_requires=['six', 'requests'],
+    install_requires=['six', 'requests', 'tzlocal'],
     test_suite='test',
-    test_requires=['mock'],
+    test_requires=['mock', 'pytz', 'tzlocal'],
     license='MIT',
     classifiers=(
         'Development Status :: 5 - Production/Stable',

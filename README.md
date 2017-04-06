@@ -151,10 +151,14 @@ survey_responses_page1_trend = delighted.SurveyResponse.all(trend='123')
 survey_responses_page1_desc = delighted.SurveyResponse.all(order='desc')
 
 # List all survey responses, 100 per page, page 5, with a time range
-filtered_survey_responses = delighted.SurveyResponse.all(page=5,
+import pytz
+timezone = pytz.timezone('America/Chicago')
+filtered_survey_responses = delighted.SurveyResponse.all(
+    page=5,
     per_page=100,
-    since=datetime.datetime(2014, 03, 01),
-    until=datetime.datetime(2014, 04, 30))
+    since=timezone.localize(datetime.datetime(2014, 3, 1)),
+    until=timezone.localize(datetime.datetime(2014, 4, 30))
+)
 ```
 
 Retrieving metrics:
@@ -167,9 +171,13 @@ metrics = delighted.Metrics.retrieve()
 # for a specific trend (ID: 123)
 metrics = delighted.Metrics.retrieve(trend='123')
 
-# Get metrics, for given range
-metrics = delighted.Metrics.retrieve(since=datetime.date(2013, 10, 01),
-                                     until=datetime.date(2013, 11, 01))
+# Get metrics, for given time range
+import pytz
+timezone = pytz.timezone('America/Chicago')
+metrics = delighted.Metrics.retrieve(
+    since=timezone.localize(datetime.datetime(2013, 10, 1)),
+    until=timezone.localize(datetime.datetime(2013, 11, 1))
+)
 ```
 
 ## <a name="advanced-configuration"></a> Advanced configuration & testing

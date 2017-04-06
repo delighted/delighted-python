@@ -1,5 +1,10 @@
 import delighted
+from delighted.util import aware_datetime_to_epoch_seconds, \
+    naive_date_to_datetime
 from . import get_headers, post_headers, DelightedTestCase
+import datetime
+import pytz
+import tzlocal
 from base64 import b64encode
 from six import b
 
@@ -32,7 +37,7 @@ class TestResource(DelightedTestCase):
         client = delighted.Client(api_key='example')
         self.check_retrieving_metrics(client=client)
 
-    def test_retrieving_metrics_range(self):
+    def test_retrieving_metrics_range_unixtimestamp(self):
         data = {'nps': 10}
         self.mock_response(200, {}, data)
         since = 1425168000
@@ -40,8 +45,42 @@ class TestResource(DelightedTestCase):
         url = 'https://api.delightedapp.com/v1/metrics'
 
         metrics = delighted.Metrics.retrieve(since=since, until=until)
-        self.check_call('get', url, get_headers, None, \
-            {'since': 1425168000, 'until': 1430348400})
+        self.check_call('get', url, get_headers, None,
+                        {'since': 1425168000, 'until': 1430348400})
+        self.assertTrue(delighted.Metrics is type(metrics))
+        self.assertEqual(dict(metrics), data)
+        self.assertEqual(metrics.nps, 10)
+        self.assertRaises(AttributeError, lambda: metrics.id)
+
+    def test_retrieving_metrics_range_date_object(self):
+        data = {'nps': 10}
+        self.mock_response(200, {}, data)
+        since = datetime.date(2013, 10, 1)
+        until = datetime.date(2013, 11, 1)
+        timezone = tzlocal.get_localzone()
+        since_seconds = self._naive_date_to_epoch_seconds(since, timezone)
+        until_seconds = self._naive_date_to_epoch_seconds(until, timezone)
+        url = 'https://api.delightedapp.com/v1/metrics'
+
+        metrics = delighted.Metrics.retrieve(since=since, until=until)
+        self.check_call('get', url, get_headers, None,
+                        {'since': since_seconds, 'until': until_seconds})
+        self.assertTrue(delighted.Metrics is type(metrics))
+        self.assertEqual(dict(metrics), data)
+        self.assertEqual(metrics.nps, 10)
+        self.assertRaises(AttributeError, lambda: metrics.id)
+
+    def test_retrieving_metrics_range_datetime_object(self):
+        data = {'nps': 10}
+        self.mock_response(200, {}, data)
+        timezone = pytz.timezone('America/Chicago')
+        since = timezone.localize(datetime.datetime(2013, 10, 1))
+        until = timezone.localize(datetime.datetime(2013, 11, 1))
+        url = 'https://api.delightedapp.com/v1/metrics'
+
+        metrics = delighted.Metrics.retrieve(since=since, until=until)
+        self.check_call('get', url, get_headers, None,
+                        {'since': 1380603600, 'until': 1383282000})
         self.assertTrue(delighted.Metrics is type(metrics))
         self.assertEqual(dict(metrics), data)
         self.assertEqual(metrics.nps, 10)
@@ -210,3 +249,8 @@ class TestResource(DelightedTestCase):
         self.assertTrue(list is type(bounces))
         self.assertTrue(delighted.Bounce is type(bounces[0]))
         self.assertEqual(resp1, dict(bounces[0]))
+
+    @classmethod
+    def _naive_date_to_epoch_seconds(cls, date_obj, timezone):
+        datetime_obj = timezone.localize(naive_date_to_datetime(date_obj))
+        return aware_datetime_to_epoch_seconds(datetime_obj)
