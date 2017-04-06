@@ -6,7 +6,11 @@ Breaking:
 
 Features:
 
-- Adds explicit support for 3.5 and 3.6.
+- Adds explicit support for 3.5 and 3.6
+
+Bugfixes:
+
+- Fix parsing of datetime.date objects
 
 ## 1.1.2 (2017-04-05)
 
