@@ -66,7 +66,9 @@ class RetrievableResource(Resource):
     @classmethod
     def retrieve(self, *args, **params):
         self._set_client(params)
-        if len(args) > 0 and not (hasattr(self.__class__, 'singleton_resource') and self.singleton_resource):
+        if (len(args) > 0 and
+            not (hasattr(self.__class__, 'singleton_resource') and
+                 self.singleton_resource)):
             path = '%s/%s' % (self.path, args[0])
         else:
             path = self.path
