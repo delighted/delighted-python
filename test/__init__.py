@@ -21,7 +21,6 @@ class DelightedTestCase(unittest.TestCase):
         super(DelightedTestCase, self).setUp()
 
         delighted.api_key = 'abc123'
-        delighted.api_base_url = 'https://api.delightedapp.com/v1/'
 
         self.request_patcher = patch('requests.request')
         self.request_mock = self.request_patcher.start()
