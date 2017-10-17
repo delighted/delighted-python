@@ -223,6 +223,14 @@ metrics_from_custom_shared_client = delighted.Metrics.retrieve()
 5. Push to the branch (`git push origin my-new-feature`)
 6. Create new Pull Request
 
+## Releasing
+
+1. Bump the version in `delighted/__init__.py`.
+2. Update the README and CHANGELOG as needed.
+3. Tag the commit for release.
+4. Register and update the package against PyPI's test server with `python setup.py register -r pypitest` and  then `python setup.py sdist upload -r pypitest`.
+5. If (4) works, push to PyPI's live servers with `python setup.py register -r pypi` and `python setup.py sdist upload -r pypi`.
+
 ## Author
 
 Originally by [Jason Pearson](https://github.com/kaeawc). Graciously transfered and now officially maintained by Delighted.
