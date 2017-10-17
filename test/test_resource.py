@@ -7,6 +7,7 @@ import pytz
 import tzlocal
 from base64 import b64encode
 from six import b
+import sys
 
 class TestResource(DelightedTestCase):
     def setUp(self):
@@ -253,10 +254,16 @@ class TestResource(DelightedTestCase):
     def test_rate_limit_response(self, client=None):
         self.mock_response(429, {'Retry-After': '5'}, {})
 
-        with self.assertRaises(delighted.errors.TooManyRequestsError) as context:
-            delighted.Metrics.retrieve(client=client)
+        # https://docs.python.org/2/library/unittest.html#unittest.TestCase.assertRaises
+        # Ability to use assertRaises() as a context manager was added in 2.7
+        if sys.version_info < (2, 7):
+            with self.assertRaises(delighted.errors.TooManyRequestsError):
+                delighted.Metrics.retrieve(client=client)
+        else:
+            with self.assertRaises(delighted.errors.TooManyRequestsError) as context:
+                delighted.Metrics.retrieve(client=client)
 
-        self.assertEqual(5, context.exception.retry_after)
+            self.assertEqual(5, context.exception.retry_after)
 
     @classmethod
     def _naive_date_to_epoch_seconds(cls, date_obj, timezone):
