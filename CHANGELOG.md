@@ -1,3 +1,9 @@
+## 2.1.0 (Unreleased)
+
+Features:
+
+- Adds support for rate limit responses
+
 ## 2.0.0 (Unreleased)
 
 Breaking:

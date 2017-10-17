@@ -250,6 +250,14 @@ class TestResource(DelightedTestCase):
         self.assertTrue(delighted.Bounce is type(bounces[0]))
         self.assertEqual(resp1, dict(bounces[0]))
 
+    def test_rate_limit_response(self, client=None):
+        self.mock_response(429, {'Retry-After': '5'}, {})
+
+        with self.assertRaises(delighted.errors.TooManyRequestsError) as context:
+            delighted.Metrics.retrieve(client=client)
+
+        self.assertEqual(5, context.exception.retry_after)
+
     @classmethod
     def _naive_date_to_epoch_seconds(cls, date_obj, timezone):
         datetime_obj = timezone.localize(naive_date_to_datetime(date_obj))

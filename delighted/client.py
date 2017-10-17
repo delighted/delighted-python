@@ -9,6 +9,7 @@ from delighted.errors import (
     GeneralAPIError,
     ResourceValidationError,
     ServiceUnavailableError,
+    TooManyRequestsError,
     UnsupportedFormatRequestedError,
 )
 from delighted.util import encode
@@ -56,6 +57,8 @@ class Client(object):
             raise UnsupportedFormatRequestedError(response)
         if response.status_code == 422:
             raise ResourceValidationError(response)
+        if response.status_code == 429:
+            raise TooManyRequestsError(response)
         if response.status_code == 503:
             raise ServiceUnavailableError(response)
         raise GeneralAPIError(response)

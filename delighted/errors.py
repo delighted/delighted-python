@@ -16,11 +16,22 @@ class AuthenticationError(DelightedError):
 
 class UnsupportedFormatRequestedError(DelightedError):
     """406, invalid format in Accept header."""
+    pass
 
 
 class ResourceValidationError(DelightedError):
     """422, validation errors."""
     pass
+
+
+
+class TooManyRequestsError(DelightedError):
+    """429, rate limited."""
+
+    def __init__(self, response):
+        super(TooManyRequestsError, self).__init__(response)
+        self.retry_after = int(response.headers['Retry-After'])
+
 
 
 class GeneralAPIError(DelightedError):
