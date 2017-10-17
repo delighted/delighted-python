@@ -257,8 +257,7 @@ class TestResource(DelightedTestCase):
         # https://docs.python.org/2/library/unittest.html#unittest.TestCase.assertRaises
         # Ability to use assertRaises() as a context manager was added in 2.7
         if sys.version_info < (2, 7):
-            with self.assertRaises(delighted.errors.TooManyRequestsError):
-                delighted.Metrics.retrieve(client=client)
+            self.assertRaises(delighted.errors.TooManyRequestsError, lambda: delighted.Metrics.retrieve(client=client))
         else:
             with self.assertRaises(delighted.errors.TooManyRequestsError) as context:
                 delighted.Metrics.retrieve(client=client)
