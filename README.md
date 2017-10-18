@@ -180,6 +180,19 @@ metrics = delighted.Metrics.retrieve(
 )
 ```
 
+## Rate limits
+
+If a request is rate limited, a `TooManyRequestsError` exception is raised. You can rescue that exception to implement exponential backoff or retry strategies. The exception provides a `retry_after` attribute to tell you how many seconds you should wait before retrying. For example:
+
+```python
+try:
+    metrics = delighted.Metrics.retrieve()
+except delighted.errors.TooManyRequestsError as err:
+    retry_after_seconds = err.retry_after
+    # wait for retry_after_seconds before retrying
+    # add your retry strategy here ...
+```
+
 ## <a name="advanced-configuration"></a> Advanced configuration & testing
 
 The following options are configurable for the client:
