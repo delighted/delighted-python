@@ -26,8 +26,8 @@ setup(
     test_suite='test',
     test_requires=['mock', 'pytz', 'tzlocal'],
     license='MIT',
-    classifiers=(
-        'Development Status :: 5 - Production/Stable',
+    classifiers=[
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
@@ -42,5 +42,5 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Software Development :: Libraries :: Python Modules'
-    ),
+    ],
 )
