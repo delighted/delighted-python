@@ -4,7 +4,7 @@ Features:
 
 - Adds support for rate limit responses
 
-## 2.0.0 (Unreleased)
+## 2.0.0 (Prerelease)
 
 Breaking:
 
