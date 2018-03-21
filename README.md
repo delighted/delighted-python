@@ -69,6 +69,14 @@ Unsubscribing people:
 delighted.Unsubscribe.create(person_email='foo+test1@delighted.com')
 ```
 
+Listing people:
+
+```python
+# List all people, 20 per page, first 2 pages
+delighted.Person.all()
+delighted.Person.all(page=2)
+```
+
 Listing people who have unsubscribed:
 
 ```python

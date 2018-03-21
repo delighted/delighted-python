@@ -87,7 +87,7 @@ class Metrics(RetrievableResource):
     singleton_resource = True
 
 
-class Person(CreateableResource):
+class Person(AllResource, CreateableResource):
     path = 'people'
 
 

@@ -229,6 +229,26 @@ class TestResource(DelightedTestCase):
         resp2_person = {'email': 'foo@bar.com'}
         self.assertEqual(resp2_person, dict(survey_responses[1].person))
 
+    def test_listing_all_people(self):
+        url = 'https://api.delightedapp.com/v1/people'
+        person1 = {'id': '123', 'email': 'foo@example.com', 'name': 'Foo Smith'}
+        person2 = {'id': '456', 'email': 'bar@example.com', 'name': 'Bar Kim'}
+        self.mock_response(200, {}, [person1, person2])
+
+        people = delighted.Person.all()
+        self.check_call('get', url, get_headers, {}, None)
+        self.assertTrue(list is type(people))
+        self.assertTrue(delighted.Person is type(people[0]))
+        self.assertEqual({'email': 'foo@example.com', 'name': 'Foo Smith'}, dict(people[0]))
+        self.assertEqual('foo@example.com', people[0].email)
+        self.assertEqual('Foo Smith', people[0].name)
+        self.assertEqual('123', people[0].id)
+        self.assertTrue(delighted.Person is type(people[1]))
+        self.assertEqual({'email': 'bar@example.com', 'name': 'Bar Kim'}, dict(people[1]))
+        self.assertEqual('Bar Kim', people[1].name)
+        self.assertEqual('bar@example.com', people[1].email)
+        self.assertEqual('456', people[1].id)
+
     def test_listing_all_unsubscribes(self):
         url = 'https://api.delightedapp.com/v1/unsubscribes'
         resp1 = {'person_id': '123', 'email': 'foo@bar.com', 'name': 'Foo', 'unsubscribed_at': 1440621400}
