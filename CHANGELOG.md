@@ -1,3 +1,9 @@
+## 2.2.0 (Prerelease)
+
+Features:
+
+- Adds support for listing people
+
 ## 2.1.0 (2017-10-18)
 
 Features:
