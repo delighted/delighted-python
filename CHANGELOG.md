@@ -2,7 +2,7 @@
 
 Features:
 
-- Add support for deleting people
+- Adds support for deleting people
 
 ## 2.2.0 (Prerelease)
 
