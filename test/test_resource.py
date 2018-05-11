@@ -122,6 +122,28 @@ class TestResource(DelightedTestCase):
         delighted.Unsubscribe.create(person_email=email)
         self.check_call('post', url, post_headers, data, None)
 
+    def test_deleting_a_person_by_id(self):
+        url = 'https://api.delightedapp.com/v1/people/42'
+        self.mock_response(202, {}, {'ok': True})
+
+        delighted.Person.delete(id=42)
+        self.check_call('delete', url, post_headers, {}, None)
+
+    def test_deleting_a_person_by_email(self):
+        url = 'https://api.delightedapp.com/v1/people/email:foo@example.com'
+        self.mock_response(202, {}, {'ok': True})
+
+        delighted.Person.delete(email='foo@example.com')
+        self.check_call('delete', url, post_headers, {}, None)
+
+    def test_deleting_a_person_by_phone_number(self):
+        url = 'https://api.delightedapp.com/v1/people/phone_number:+14155551212'
+        self.mock_response(202, {}, {'ok': True})
+
+        delighted.Person.delete(phone_number='+14155551212')
+        self.check_call('delete', url, post_headers, {}, None)
+
+
     def test_deleting_pending_survey_requests_for_a_person(self):
         email = 'foo@bar.com'
         url = 'https://api.delightedapp.com/v1/people/foo%40bar.com' + \
