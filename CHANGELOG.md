@@ -1,3 +1,9 @@
+## 2.2.0
+
+Features:
+
+- Add support for deleting people
+
 ## 2.2.0 (Prerelease)
 
 Features:
