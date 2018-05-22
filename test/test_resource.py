@@ -122,6 +122,31 @@ class TestResource(DelightedTestCase):
         delighted.Unsubscribe.create(person_email=email)
         self.check_call('post', url, post_headers, data, None)
 
+    def test_deleting_a_person_by_multiple_identifiers(self):
+        self.assertRaises(ValueError, lambda: delighted.Person.delete(id=42, email="foo@example.com"))
+
+    def test_deleting_a_person_by_id(self):
+        url = 'https://api.delightedapp.com/v1/people/42'
+        self.mock_response(202, {}, {'ok': True})
+
+        delighted.Person.delete(id=42)
+        self.check_call('delete', url, post_headers, {}, None)
+
+    def test_deleting_a_person_by_email(self):
+        url = 'https://api.delightedapp.com/v1/people/email%3Afoo%40example.com'
+        self.mock_response(202, {}, {'ok': True})
+
+        delighted.Person.delete(email='foo@example.com')
+        self.check_call('delete', url, post_headers, {}, None)
+
+    def test_deleting_a_person_by_phone_number(self):
+        url = 'https://api.delightedapp.com/v1/people/phone_number%3A%2B14155551212'
+        self.mock_response(202, {}, {'ok': True})
+
+        delighted.Person.delete(phone_number='+14155551212')
+        self.check_call('delete', url, post_headers, {}, None)
+
+
     def test_deleting_pending_survey_requests_for_a_person(self):
         email = 'foo@bar.com'
         url = 'https://api.delightedapp.com/v1/people/foo%40bar.com' + \
@@ -228,6 +253,26 @@ class TestResource(DelightedTestCase):
         self.assertEqual(delighted.Person, type(survey_responses[1].person))
         resp2_person = {'email': 'foo@bar.com'}
         self.assertEqual(resp2_person, dict(survey_responses[1].person))
+
+    def test_listing_all_people(self):
+        url = 'https://api.delightedapp.com/v1/people'
+        person1 = {'id': '123', 'email': 'foo@example.com', 'name': 'Foo Smith'}
+        person2 = {'id': '456', 'email': 'bar@example.com', 'name': 'Bar Kim'}
+        self.mock_response(200, {}, [person1, person2])
+
+        people = delighted.Person.all()
+        self.check_call('get', url, get_headers, {}, None)
+        self.assertTrue(list is type(people))
+        self.assertTrue(delighted.Person is type(people[0]))
+        self.assertEqual({'email': 'foo@example.com', 'name': 'Foo Smith'}, dict(people[0]))
+        self.assertEqual('foo@example.com', people[0].email)
+        self.assertEqual('Foo Smith', people[0].name)
+        self.assertEqual('123', people[0].id)
+        self.assertTrue(delighted.Person is type(people[1]))
+        self.assertEqual({'email': 'bar@example.com', 'name': 'Bar Kim'}, dict(people[1]))
+        self.assertEqual('Bar Kim', people[1].name)
+        self.assertEqual('bar@example.com', people[1].email)
+        self.assertEqual('456', people[1].id)
 
     def test_listing_all_unsubscribes(self):
         url = 'https://api.delightedapp.com/v1/unsubscribes'

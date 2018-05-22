@@ -69,6 +69,14 @@ Unsubscribing people:
 delighted.Unsubscribe.create(person_email='foo+test1@delighted.com')
 ```
 
+Listing people:
+
+```python
+# List all people, 20 per page, first 2 pages
+delighted.Person.all()
+delighted.Person.all(page=2)
+```
+
 Listing people who have unsubscribed:
 
 ```python
@@ -83,6 +91,17 @@ Listing people whose emails have bounced:
 # List all people whose emails have bounced, 20 per page, first 2 pages
 delighted.Bounce.all()
 delighted.Bounce.all(page=2)
+```
+
+Deleting a person and all of the data associated with them:
+
+```python
+# Delete by person id
+delighted.Person.delete(id=42)
+# Delete by email address
+delighted.Person.delete(email='test@example.com')
+# Delete by phone number (must be E.164 format)
+delighted.Person.delete(phone_number='+14155551212')
 ```
 
 Deleting pending survey requests
@@ -241,8 +260,8 @@ metrics_from_custom_shared_client = delighted.Metrics.retrieve()
 1. Bump the version in `delighted/__init__.py`.
 2. Update the README and CHANGELOG as needed.
 3. Tag the commit for release.
-4. Register and update the package against PyPI's test server with `python setup.py register -r pypitest` and  then `python setup.py sdist upload -r pypitest`.
-5. If (4) works, push to PyPI's live servers with `python setup.py register -r pypi` and `python setup.py sdist upload -r pypi`.
+4. Update the package against PyPI's test server with  `python setup.py sdist upload -r pypitest`.
+5. If (4) works, push to PyPI's live servers with `python setup.py sdist upload -r pypi`.
 
 ## Author
 

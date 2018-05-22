@@ -43,6 +43,19 @@ class Resource(dict):
     def _set_client(self, params):
         self.client = params.pop('client', None) or get_shared_client()
 
+    @classmethod
+    def _identifier_string(self, **identifier_dict):
+        if len(identifier_dict) != 1:
+            raise ValueError('You must pass exactly one identifier name and value')
+
+        identifier_key = list(identifier_dict.keys())[0]
+        identifier_value = list(identifier_dict.values())[0]
+
+        if 'id' == str(identifier_key):
+            return str(identifier_value)
+        else:
+            return '%s:%s' % (identifier_key, identifier_value)
+
 
 class AllResource(Resource):
     @classmethod
@@ -82,12 +95,21 @@ class UpdateableResource(Resource):
         return type(self)(j)
 
 
+class DeleteableResource(Resource):
+    @classmethod
+    def delete(self, **params):
+        self._set_client(params)
+        identifier = self._identifier_string(**params)
+        path = '%s/%s' % (self.path, quote(identifier, ''))
+        return self.client.request('delete', path, {}, {})
+
+
 class Metrics(RetrievableResource):
     path = 'metrics'
     singleton_resource = True
 
 
-class Person(CreateableResource):
+class Person(AllResource, CreateableResource, DeleteableResource):
     path = 'people'
 
 
