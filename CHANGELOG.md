@@ -1,4 +1,4 @@
-## 2.2.0
+## Unreleased
 
 Features:
 
