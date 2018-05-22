@@ -44,17 +44,17 @@ class Resource(dict):
         self.client = params.pop('client', None) or get_shared_client()
 
     @classmethod
-    def _identifier_string(self, **id_dict):
-        if len(id_dict) != 1:
+    def _identifier_string(self, **identifier_dict):
+        if len(identifier_dict) != 1:
             raise ValueError('You must pass exactly one identifier name and value')
 
-        id_key = list(id_dict.keys())[0]
-        id_value = list(id_dict.values())[0]
+        identifier_key = list(identifier_dict.keys())[0]
+        identifier_value = list(identifier_dict.values())[0]
 
-        if 'id' == str(id_key):
-            return str(id_value)
+        if 'id' == str(identifier_key):
+            return str(identifier_value)
         else:
-            return '%s:%s' % (id_key, id_value)
+            return '%s:%s' % (identifier_key, identifier_value)
 
 
 class AllResource(Resource):
