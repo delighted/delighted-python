@@ -105,7 +105,7 @@ class DeleteableResource(Resource):
     def delete(self, **params):
         self._set_client(params)
         identifier = self._identifier_string(**params)
-        path = '%s/%s' % (self.path, identifier)
+        path = '%s/%s' % (self.path, quote(identifier))
         return self.client.request('delete', path, {}, {})
 
 

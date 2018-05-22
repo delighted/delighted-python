@@ -130,14 +130,14 @@ class TestResource(DelightedTestCase):
         self.check_call('delete', url, post_headers, {}, None)
 
     def test_deleting_a_person_by_email(self):
-        url = 'https://api.delightedapp.com/v1/people/email:foo@example.com'
+        url = 'https://api.delightedapp.com/v1/people/email%3Afoo%40example.com'
         self.mock_response(202, {}, {'ok': True})
 
         delighted.Person.delete(email='foo@example.com')
         self.check_call('delete', url, post_headers, {}, None)
 
     def test_deleting_a_person_by_phone_number(self):
-        url = 'https://api.delightedapp.com/v1/people/phone_number:+14155551212'
+        url = 'https://api.delightedapp.com/v1/people/phone_number%3A%2B14155551212'
         self.mock_response(202, {}, {'ok': True})
 
         delighted.Person.delete(phone_number='+14155551212')
