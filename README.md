@@ -100,7 +100,7 @@ Deleting a person and all of the data associated with them:
 delighted.Person.delete(id=42)
 # Delete by email address
 delighted.Person.delete(email='test@example.com')
-# Delete by phone number
+# Delete by phone number (must be E.164 format)
 delighted.Person.delete(phone_number='+14155551212')
 ```
 
