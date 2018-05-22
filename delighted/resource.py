@@ -56,10 +56,11 @@ class Resource(dict):
         if not id_key:
             raise ValueError('You must pass an identifier name and value')
 
-        if 'id' == id_key:
-            return id_value
+        if 'id' == str(id_key):
+            return str(id_value)
         else:
             return '%s:%s' % (id_key, id_value)
+
 
 class AllResource(Resource):
     @classmethod
