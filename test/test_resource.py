@@ -122,6 +122,9 @@ class TestResource(DelightedTestCase):
         delighted.Unsubscribe.create(person_email=email)
         self.check_call('post', url, post_headers, data, None)
 
+    def test_deleting_a_person_by_multiple_identifiers(self):
+        self.assertRaises(ValueError, lambda: delighted.Person.delete(id=42, email="foo@example.com"))
+
     def test_deleting_a_person_by_id(self):
         url = 'https://api.delightedapp.com/v1/people/42'
         self.mock_response(202, {}, {'ok': True})

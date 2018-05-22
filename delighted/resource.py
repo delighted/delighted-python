@@ -45,16 +45,11 @@ class Resource(dict):
 
     @classmethod
     def _identifier_string(self, **id_dict):
-        id_key = None
-        id_value = None
-        for key, value in six.iteritems(id_dict):
-            if key and value:
-                id_key = key
-                id_value = value
-                break
+        if len(id_dict) != 1:
+            raise ValueError('You must pass exactly one identifier name and value')
 
-        if not id_key:
-            raise ValueError('You must pass an identifier name and value')
+        id_key = list(id_dict.keys())[0]
+        id_value = list(id_dict.values())[0]
 
         if 'id' == str(id_key):
             return str(id_value)
