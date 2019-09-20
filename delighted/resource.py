@@ -11,15 +11,13 @@ class Resource(dict):
 
         if 'id' in attrs:
             object.__setattr__(self, 'id', attrs['id'])
-            del attrs['id']
+            # del attrs['id']
 
         if hasattr(self.__class__, 'expandable_attributes'):
             for attr, klass in six.iteritems(self.expandable_attributes):
                 if attr in attrs and isinstance(attrs[attr], dict):
                     expandable_attrs = attrs.pop(attr)
-                    item_id = expandable_attrs['id']
-                    super(Resource, self).__setitem__(attr, item_id)
-                    object.__setattr__(self, attr, klass(expandable_attrs))
+                    super(Resource, self).__setitem__(attr, klass(expandable_attrs))
 
         for k, v in six.iteritems(attrs):
             super(Resource, self).__setitem__(k, v)
