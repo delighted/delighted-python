@@ -1,3 +1,13 @@
+## 2.4.0 (2019-10-16)
+
+Features:
+
+- Expand nested object data in responses
+
+Bugfixes:
+
+- Includes IDs in responses
+
 ## 2.3.0 (2018-05-22)
 
 Features:
