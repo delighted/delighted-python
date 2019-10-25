@@ -16,6 +16,7 @@ setup(
     name='delighted',
     version=version,
     description='Delighted API Python Client.',
+    long_description_content_type='text/markdown',
     long_description=open('README.md').read(),
     author='Ben Turner, Robby Colvin',
     author_email='ben@delighted.com',
