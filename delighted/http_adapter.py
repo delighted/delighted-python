@@ -9,4 +9,4 @@ class HTTPAdapter(object):
         resp = requests.request(method, uri, headers=headers, data=data,
                                 params=params)
 
-        return HTTPResponse(resp.status_code, resp.headers, resp.text)
+        return HTTPResponse(resp.status_code, resp.headers, resp.text, resp.links)

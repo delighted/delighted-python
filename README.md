@@ -72,9 +72,22 @@ delighted.Unsubscribe.create(person_email='foo+test1@delighted.com')
 Listing people:
 
 ```python
-# List all people, 20 per page, first 2 pages
-delighted.Person.all()
-delighted.Person.all(page=2)
+# List all people, auto pagination
+# Note: this may use sleep to retry with back off when needed
+people = delighted.Person.list()
+for person in people.auto_paging_iter():
+    # Do something with person
+
+# If you do not want auto pagination to handle rate limits with sleep,
+# you will need need to handle the exception manually, e.g.:
+people = delighted.Person.list()
+while True:
+    try:
+        for person in people.auto_paging_iter(auto_handle_rate_limits=False):
+            # Do something with person
+    except TooManyRequestsError as e:
+        time.sleep(int(e.response.headers['Retry-After']))
+        continue
 ```
 
 Listing people who have unsubscribed:

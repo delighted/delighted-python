@@ -1,3 +1,9 @@
+## Unreleased
+
+Features:
+
+- Add support for listing people, with auto cursor pagination
+
 ## 3.0.0rc1 (2019-10-25)
 
 Features:

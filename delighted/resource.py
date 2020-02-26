@@ -1,7 +1,9 @@
 import six
+import time
 from six.moves.urllib_parse import quote
 
 from delighted import get_shared_client
+from delighted.errors import TooManyRequestsError
 
 
 class Resource(dict):
@@ -59,8 +61,15 @@ class AllResource(Resource):
     @classmethod
     def all(self, **params):
         self._set_client(params)
-        j = self.client.request('get', self.path, {}, params)
+        j = self.client.request_json('get', self.path, {}, params)
         return [self(i) for i in j]
+
+
+class ListResource(Resource):
+    @classmethod
+    def list(self, **params):
+        self._set_client(params)
+        return ListObject(self.__name__, self.path, params, self.client)
 
 
 class CreateableResource(Resource):
@@ -68,7 +77,7 @@ class CreateableResource(Resource):
     @classmethod
     def create(self, **params):
         self._set_client(params)
-        j = self.client.request('post', self.path, {}, params)
+        j = self.client.request_json('post', self.path, {}, params)
         return self(j)
 
 
@@ -78,7 +87,7 @@ class RetrievableResource(Resource):
     def retrieve(self, *args, **params):
         self._set_client(params)
         path = '%s/%s' % (self.path, args[0]) if len(args) > 0 else self.path
-        j = self.client.request('get', path, {}, params)
+        j = self.client.request_json('get', path, {}, params)
         return self(j)
 
 
@@ -89,7 +98,7 @@ class UpdateableResource(Resource):
             expand_attrs = list(self.__class__.expandable_attributes.keys())
             params.update({'expand': expand_attrs})
         path = '%s/%s' % (self.path, self.id) if self.id else self.path
-        j = self.client.request('put', path, {}, dict(self))
+        j = self.client.request_json('put', path, {}, dict(self))
         return type(self)(j)
 
 
@@ -99,7 +108,7 @@ class DeleteableResource(Resource):
         self._set_client(params)
         identifier = self._identifier_string(**params)
         path = '%s/%s' % (self.path, quote(identifier, ''))
-        return self.client.request('delete', path, {}, {})
+        return self.client.request_json('delete', path, {}, {})
 
 
 class Metrics(RetrievableResource):
@@ -107,7 +116,7 @@ class Metrics(RetrievableResource):
     singleton_resource = True
 
 
-class Person(AllResource, CreateableResource, DeleteableResource):
+class Person(ListResource, AllResource, CreateableResource, DeleteableResource):
     path = 'people'
 
 
@@ -124,7 +133,7 @@ class SurveyRequest(Resource):
         escaped_email = quote(params['person_email'])
         url = self.path % escaped_email
 
-        return self.client.request('delete', url)
+        return self.client.request_json('delete', url)
 
 
 class SurveyResponse(AllResource, CreateableResource,
@@ -139,3 +148,42 @@ class Unsubscribe(AllResource, CreateableResource):
 
 class Bounce(AllResource):
     path = 'bounces'
+
+
+class ListObject:
+    exposed_resource = {'Person': Person}
+
+    def __init__(self, klass, path, params, client):
+        self.klass = klass
+        self.path = path
+        self.params = params
+        self.client = client
+        self.interation_count = 0
+
+    def auto_paging_iter(self, auto_handle_rate_limits=True):
+        while True:
+            try:
+                # Get next (or first) page
+                if self.interation_count == 0:
+                    result = self.client.request('get', self.path, {}, self.params)
+                else:
+                    result = self.client.request('get', self.next_link, full_url=True)
+            except TooManyRequestsError as e:
+                if auto_handle_rate_limits:
+                    # Sleep and retry call
+                    time.sleep(int(e.response.headers['Retry-After']))
+                    continue
+                else:
+                    raise
+
+            self.interation_count += 1
+            if 'next' in result.response.links:
+                self.next_link = result.response.links['next']['url']
+            else:
+                self.next_link = None
+
+            for item in result.json:
+                yield self.exposed_resource[self.klass](item)
+
+            if not self.next_link:
+                break
