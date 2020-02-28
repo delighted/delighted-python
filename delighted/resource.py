@@ -69,7 +69,7 @@ class ListResource(Resource):
     @classmethod
     def list(self, **params):
         self._set_client(params)
-        return ListObject(self.__name__, self.path, params, self.client)
+        return ListObject(self, self.path, params, self.client)
 
 
 class CreateableResource(Resource):
@@ -151,8 +151,6 @@ class Bounce(AllResource):
 
 
 class ListObject:
-    exposed_resource = {'Person': Person}
-
     def __init__(self, klass, path, params, client):
         self.klass = klass
         self.path = path
@@ -160,7 +158,7 @@ class ListObject:
         self.client = client
         self.interation_count = 0
 
-    def auto_paging_iter(self, auto_handle_rate_limits=True):
+    def auto_paging_iter(self, auto_handle_rate_limits=False):
         while True:
             try:
                 # Get next (or first) page
@@ -171,7 +169,7 @@ class ListObject:
             except TooManyRequestsError as e:
                 if auto_handle_rate_limits:
                     # Sleep and retry call
-                    time.sleep(int(e.response.headers['Retry-After']))
+                    time.sleep(e.retry_after)
                     continue
                 else:
                     raise
@@ -183,7 +181,7 @@ class ListObject:
                 self.next_link = None
 
             for item in result.json:
-                yield self.exposed_resource[self.klass](item)
+                yield self.klass(item)
 
             if not self.next_link:
                 break

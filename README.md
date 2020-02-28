@@ -73,21 +73,21 @@ Listing people:
 
 ```python
 # List all people, auto pagination
-# Note: this may use sleep to retry with back off when needed
-people = delighted.Person.list()
-for person in people.auto_paging_iter():
-    # Do something with person
-
-# If you do not want auto pagination to handle rate limits with sleep,
-# you will need need to handle the exception manually, e.g.:
+# Note: Make sure to handle the possible rate limits error
 people = delighted.Person.list()
 while True:
     try:
-        for person in people.auto_paging_iter(auto_handle_rate_limits=False):
+        for person in people.auto_paging_iter():
             # Do something with person
     except TooManyRequestsError as e:
-        time.sleep(int(e.response.headers['Retry-After']))
+        # Indicates how long to wait (in seconds) before making this request again
+        e.retry_after
         continue
+
+# For convenience, this method can use a sleep to automatically handle rate limits
+people = delighted.Person.list(auto_handle_rate_limits=True)
+for person in people.auto_paging_iter():
+    # Do something with person
 ```
 
 Listing people who have unsubscribed:

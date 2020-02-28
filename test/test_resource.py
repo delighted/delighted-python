@@ -348,7 +348,7 @@ class TestResource(DelightedTestCase):
 
         people = []
         with patch('time.sleep', return_value=None) as patched_time_sleep:
-            for person in delighted.Person.list().auto_paging_iter():
+            for person in delighted.Person.list().auto_paging_iter(auto_handle_rate_limits=True):
                 people.append(person)
 
         patched_time_sleep.assert_called_once_with(3)
