@@ -156,13 +156,13 @@ class ListObject:
         self.path = path
         self.params = params
         self.client = client
-        self.interation_count = 0
+        self.iteration_count = 0
 
     def auto_paging_iter(self, auto_handle_rate_limits=False):
         while True:
             try:
                 # Get next (or first) page
-                if self.interation_count == 0:
+                if self.iteration_count == 0:
                     result = self.client.request('get', self.path, {}, self.params)
                 else:
                     result = self.client.request('get', self.next_link, full_url=True)
@@ -174,7 +174,7 @@ class ListObject:
                 else:
                     raise
 
-            self.interation_count += 1
+            self.iteration_count += 1
             if 'next' in result.response.links:
                 self.next_link = result.response.links['next']['url']
             else:
