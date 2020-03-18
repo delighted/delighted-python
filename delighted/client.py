@@ -2,6 +2,7 @@ from base64 import b64encode
 import json
 from six import b
 from six.moves.urllib_parse import urljoin
+from collections import namedtuple
 
 import delighted
 from delighted.errors import (
@@ -27,7 +28,7 @@ class Client(object):
                              "delighted.api_key = '123abc' or passing " +
                              "api_key='abc123' when instantiating client.")
 
-    def request(self, method, resource, headers={}, params={}):
+    def request(self, method, url, headers={}, params={}, full_url=False):
         headers['Accept'] = 'application/json'
         headers['Authorization'] = 'Basic %s' % \
             (b64encode(b(self.api_key)).decode('ascii'))
@@ -35,7 +36,8 @@ class Client(object):
         if method in ('post', 'put', 'delete'):
             headers['Content-Type'] = 'application/json'
 
-        url = urljoin(self.api_base_url, resource)
+        if not full_url:
+            url = urljoin(self.api_base_url, url)
 
         if method == 'get' and params:
             params = dict((key, value) for (key, value) in encode(params))
@@ -46,7 +48,11 @@ class Client(object):
 
         response = self.http_adapter.request(method, url, headers, data,
                                              params)
-        return self._handle_response(response)
+        Response = namedtuple('Response', 'json response')
+        return Response(self._handle_response(response), response)
+
+    def request_json(self, method, resource, headers={}, params={}):
+        return self.request(method, resource, headers, params).json
 
     def _handle_response(self, response):
         if response.status_code in (200, 201, 202):

@@ -2,12 +2,15 @@ import delighted
 from delighted.util import aware_datetime_to_epoch_seconds, \
     naive_date_to_datetime
 from . import get_headers, post_headers, DelightedTestCase
+from delighted.errors import TooManyRequestsError
 import datetime
 import pytz
 import tzlocal
 from base64 import b64encode
+from mock import patch
 from six import b
 import sys
+
 
 class TestResource(DelightedTestCase):
     def setUp(self):
@@ -287,6 +290,78 @@ class TestResource(DelightedTestCase):
         self.assertEqual('Bar Kim', people[1].name)
         self.assertEqual('bar@example.com', people[1].email)
         self.assertEqual('456', people[1].id)
+
+    def test_listing_all_people_pagination(self):
+        url = 'https://api.delightedapp.com/v1/people'
+        url_next = 'http://api.delightedapp.com/v1/people?nextlink123'
+        person1 = {'id': '123', 'email': 'foo@example.com', 'name': 'Foo Smith'}
+        person2 = {'id': '456', 'email': 'bar@example.com', 'name': 'Bar Kim'}
+        person3 = {'id': '789', 'email': 'foos@ball.com', 'name': 'Foos Ball'}
+        mock_response = delighted.http_response.HTTPResponse(200, {}, [person1, person2], {'next': {'url': url_next}})
+        mock_response_next = delighted.http_response.HTTPResponse(200, {}, [person3], {})
+        self.mock_multiple_responses([mock_response, mock_response_next])
+
+        people = []
+        for person in delighted.Person.list().auto_paging_iter():
+            people.append(person)
+        call_1 = {'meth': 'get', 'url': url, 'kwargs': {'headers': get_headers, 'data': {}, 'params': None}}
+        call_2 = {'meth': 'get', 'url': url_next, 'kwargs': {'headers': get_headers, 'data': {}, 'params': None}}
+        self.check_multiple_call([call_1, call_2])
+        self.assertEqual(len(people), 3)
+        self.assertTrue(delighted.Person is type(people[0]))
+        self.assertEqual(person1, people[0])
+        self.assertTrue(delighted.Person is type(people[1]))
+        self.assertEqual(person2, people[1])
+        self.assertTrue(delighted.Person is type(people[2]))
+        self.assertEqual(person3, people[2])
+
+    def test_listing_all_people_pagination_rate_limited(self):
+        url = 'https://api.delightedapp.com/v1/people'
+        url_next = 'http://api.delightedapp.com/v1/people?nextlink123'
+        person1 = {'id': '123', 'email': 'foo@example.com', 'name': 'Foo Smith'}
+        mock_response = delighted.http_response.HTTPResponse(200, {}, [person1], {'next': {'url': url_next}})
+        mock_response_rate_limited = delighted.http_response.HTTPResponse(429, {'Retry-After': '10'}, [], {})
+        self.mock_multiple_responses([mock_response, mock_response_rate_limited])
+
+        people = []
+        with self.assertRaises(TooManyRequestsError) as context:
+            for person in delighted.Person.list().auto_paging_iter(auto_handle_rate_limits=False):
+                people.append(person)
+
+        self.assertEqual(context.exception.response.headers['Retry-After'], '10')
+        call_1 = {'meth': 'get', 'url': url, 'kwargs': {'headers': get_headers, 'data': {}, 'params': None}}
+        call_2 = {'meth': 'get', 'url': url_next, 'kwargs': {'headers': get_headers, 'data': {}, 'params': None}}
+        self.check_multiple_call([call_1, call_2])
+        self.assertEqual(len(people), 1)
+        self.assertTrue(delighted.Person is type(people[0]))
+        self.assertEqual(person1, people[0])
+
+    def test_listing_all_people_pagination_auto_handle_rate_limit(self):
+        url = 'https://api.delightedapp.com/v1/people'
+        url_next = 'http://api.delightedapp.com/v1/people?nextlink123'
+        person1 = {'id': '123', 'email': 'foo@example.com', 'name': 'Foo Smith'}
+        person_next = {'id': '456', 'email': 'next@example.com', 'name': 'Next Person'}
+        mock_response = delighted.http_response.HTTPResponse(200, {}, [person1], {'next': {'url': url_next}})
+        mock_response_rate_limited = delighted.http_response.HTTPResponse(429, {'Retry-After': '3'}, [], {})
+        mock_response_accepted = delighted.http_response.HTTPResponse(200, {}, [person_next], {})
+        self.mock_multiple_responses([mock_response, mock_response_rate_limited, mock_response_accepted])
+
+        people = []
+        with patch('time.sleep', return_value=None) as patched_time_sleep:
+            for person in delighted.Person.list().auto_paging_iter(auto_handle_rate_limits=True):
+                people.append(person)
+
+        patched_time_sleep.assert_called_once_with(3)
+
+        call_1 = {'meth': 'get', 'url': url, 'kwargs': {'headers': get_headers, 'data': {}, 'params': None}}
+        call_rejected = {'meth': 'get', 'url': url_next, 'kwargs': {'headers': get_headers, 'data': {}, 'params': None}}
+        call_accepted = {'meth': 'get', 'url': url_next, 'kwargs': {'headers': get_headers, 'data': {}, 'params': None}}
+        self.check_multiple_call([call_1, call_rejected, call_accepted])
+        self.assertEqual(len(people), 2)
+        self.assertTrue(delighted.Person is type(people[0]))
+        self.assertEqual(person1, people[0])
+        self.assertTrue(delighted.Person is type(people[1]))
+        self.assertEqual(person_next, people[1])
 
     def test_listing_all_unsubscribes(self):
         url = 'https://api.delightedapp.com/v1/unsubscribes'

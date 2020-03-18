@@ -1,3 +1,14 @@
+## Unreleased
+
+Features:
+
+- Add support for listing people, with auto cursor pagination
+
+Compatibility changes:
+
+- Add support for Python 3.7, 3.8
+- Drop support for Python 2.6, 2.7, 3.3
+
 ## 3.0.0rc1 (2019-10-25)
 
 Features:

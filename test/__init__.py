@@ -30,13 +30,20 @@ class DelightedTestCase(unittest.TestCase):
 
         self.request_patcher.stop()
 
-    def mock_response(self, status_code, headers, data):
-        mock_response = Mock()
-        mock_response.status_code = status_code
-        mock_response.headers = headers
-        mock_response.text = json.dumps(data)
+    def mock_response(self, status_code, headers, data, links=None):
+        self.mock_multiple_responses([delighted.http_response.HTTPResponse(status_code, headers, data, links)])
 
-        self.request_mock.return_value = mock_response
+    def mock_multiple_responses(self, responses):
+        mock_responses = []
+        for response in responses:
+            mock_response = Mock()
+            mock_response.status_code = response.status_code
+            mock_response.headers = response.headers
+            mock_response.text = json.dumps(response.body)
+            mock_response.links = response.links
+            mock_responses.append(mock_response)
+
+        self.request_mock.side_effect = mock_responses
 
     def mock_error(self, mock):
         mock.exceptions.RequestException = Exception
@@ -49,3 +56,10 @@ class DelightedTestCase(unittest.TestCase):
                                                   headers=headers,
                                                   data=post_data,
                                                   params=get_params)
+
+    def check_multiple_call(self, calls):
+        self.assertEqual(self.request_mock.call_count, len(calls))
+        for call in calls:
+            if call['kwargs']['data'] is not None:
+                call['kwargs']['data'] = json.dumps(call['kwargs']['data'])
+            self.request_mock.assert_any_call(call['meth'], call['url'], **call['kwargs'])
