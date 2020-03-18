@@ -273,8 +273,10 @@ metrics_from_custom_shared_client = delighted.Metrics.retrieve()
 1. Bump the version in `delighted/__init__.py`.
 2. Update the README and CHANGELOG as needed.
 3. Tag the commit for release.
-4. Update the package against PyPI's test server with  `python setup.py sdist upload -r pypitest`.
-5. If (4) works, push to PyPI's live servers with `python setup.py sdist upload -r pypi`.
+4. Create the distribution `python setup.py sdist`
+5. Update the package against PyPI's test server with [twine](https://pypi.org/project/twine/)
+`twine upload --repository-url https://test.pypi.org/legacy/ dist/TEST_PACKAGE_NAME`.
+6. If (4 and 5) work, repeat all steps, then push to PyPI's live servers with `twine upload dist/PACKAGE_NAME`.
 
 ## Author
 
