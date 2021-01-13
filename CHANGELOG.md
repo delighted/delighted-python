@@ -1,3 +1,9 @@
+## 4.0.1 (2021-01-13)
+
+Bugfixes:
+
+- Fix incorrect usage of `is not`, emiting SyntaxWarning in Python 3.8+
+
 ## 4.0.0 (2020-03-18)
 
 Features:
