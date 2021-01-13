@@ -31,7 +31,7 @@ class Resource(dict):
             self[k] = v
 
     def __getattr__(self, k):
-        if k[0] == '_' and k is not '_attrs':
+        if k[0] == '_' and k != '_attrs':
             raise AttributeError(k)
 
         try:
