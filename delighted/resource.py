@@ -171,6 +171,7 @@ class AutopilotMembership:
             return self.client.request_json('delete', self.path, {}, params)
         except AttributeError:
             print('You must first call a platform-specific method (e.g. forEmail())')
+            raise
 
 
 class AutopilotMembershipForEmail(AutopilotMembership, CreateableResource, ListResource):
