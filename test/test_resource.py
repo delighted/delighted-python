@@ -385,6 +385,116 @@ class TestResource(DelightedTestCase):
         self.assertTrue(delighted.Bounce is type(bounces[0]))
         self.assertEqual(resp1, dict(bounces[0]))
 
+    def test_retrieving_autopilot_configuration(self):
+        mock_response = {
+          'platform_id': 'email',
+          'active': True,
+          'frequency': 7776000,
+          'created_at': 1611431275,
+          'updated_at': 1618598875
+        }
+        url = 'https://api.delightedapp.com/v1/autopilot/email'
+        self.mock_response(200, {}, mock_response)
+
+        autopilot = delighted.AutopilotConfiguration.retrieve('email')
+        self.check_call('get', url, get_headers, {}, None)
+        self.assertTrue(delighted.AutopilotConfiguration is type(autopilot))
+        self.assertEqual(dict(autopilot), mock_response)
+        self.assertEqual(autopilot.platform_id, 'email')
+        self.assertEqual(autopilot.active, True)
+        self.assertRaises(AttributeError, lambda: autopilot.id)
+
+
+    def test_add_person_to_autopilot(self):
+        email = 'foo@bar.com'
+        mock_response = {'person': {'id': 123}}
+        url = 'https://api.delightedapp.com/v1/autopilot/email/memberships'
+        self.mock_response(200, {}, mock_response)
+
+        expected_headers = post_headers.copy()
+        create_kwargs = {'person_id': '123', 'person_email': email}
+
+        autopilot = delighted.AutopilotMembership.forEmail().create(**create_kwargs)
+        self.assertTrue(delighted.AutopilotMembershipForEmail is type(autopilot))
+        self.assertEqual(autopilot, {'person': {'id': 123}})
+        self.assertEqual(123, autopilot.person['id'])
+        self.check_call('post', url, expected_headers, create_kwargs, None)
+
+
+    def test_delete_person_from_autopilot(self):
+        phone_number = '+14155551212'
+        mock_response = {'person': {'id': 123}}
+        url = 'https://api.delightedapp.com/v1/autopilot/sms/memberships'
+        self.mock_response(202, {}, mock_response)
+
+        expected_headers = post_headers.copy()
+        delete_kwargs = {'person_phone_number': phone_number}
+
+        delighted.AutopilotMembership.forSms().delete(**delete_kwargs)
+        self.check_call('delete', url, expected_headers, delete_kwargs, None)
+
+
+    def test_list_autopilot_memberships(self):
+        url = 'https://api.delightedapp.com/v1/autopilot/email/memberships'
+        url_next = 'http://api.delightedapp.com/v1/autopilot/email/memberships?nextlink123'
+        person_1 = {
+            'created_at': 1614041806,
+            'updated_at': 1618012606,
+            'person': {
+                'id': '1',
+                'name': None,
+                'email': 'foo@example.com',
+                'created_at': 1611363406,
+                'phone_number': '+1555555112',
+                'last_sent_at': None
+            },
+            'next_survey_request': {
+                'id': '4',
+                'created_at': 1614041806,
+                'survey_scheduled_at': 1620086206,
+                'properties': {
+                    'Purchase Experience': 'Mobile App',
+                    'State': 'CA'
+                }
+            }
+        }
+        person_2 = {
+            'created_at': 1614041806,
+            'updated_at': 1618012606,
+            'person': {
+                'id': '2',
+                'name': None,
+                'email': 'bar@example.com',
+                'created_at': 1611363406,
+                'phone_number': '+1555555113',
+                'last_sent_at': None
+            },
+            'next_survey_request': {
+                'id': '5',
+                'created_at': 1614041806,
+                'survey_scheduled_at': 1620086206,
+                'properties': {
+                    'Purchase Experience': 'Web',
+                    'State': 'WA'
+                }
+            }
+        }
+        mock_response = delighted.http_response.HTTPResponse(200, {}, [person_1], {'next': {'url': url_next}})
+        mock_response_2 = delighted.http_response.HTTPResponse(200, {}, [person_2], {})
+        self.mock_multiple_responses([mock_response, mock_response_2])
+
+        autopilot_people = []
+        for autopilot_person in delighted.AutopilotMembership.forEmail().list().auto_paging_iter():
+            autopilot_people.append(autopilot_person)
+        call_1 = {'meth': 'get', 'url': url, 'kwargs': {'headers': get_headers, 'data': {}, 'params': None}}
+        call_2 = {'meth': 'get', 'url': url_next, 'kwargs': {'headers': get_headers, 'data': {}, 'params': None}}
+        self.check_multiple_call([call_1, call_2])
+        self.assertEqual(len(autopilot_people), 2)
+        self.assertTrue(delighted.AutopilotMembershipForEmail is type(autopilot_people[0]))
+        self.assertEqual(person_1, autopilot_people[0])
+        self.assertTrue(delighted.AutopilotMembershipForEmail is type(autopilot_people[1]))
+        self.assertEqual(person_2, autopilot_people[1])
+
     def test_rate_limit_response(self, client=None):
         self.mock_response(429, {'Retry-After': '5'}, {})
 

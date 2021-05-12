@@ -31,7 +31,7 @@ class Resource(dict):
             self[k] = v
 
     def __getattr__(self, k):
-        if k[0] == '_' and k is not '_attrs':
+        if k[0] == '_' and k != '_attrs':
             raise AttributeError(k)
 
         try:
@@ -148,6 +148,38 @@ class Unsubscribe(AllResource, CreateableResource):
 
 class Bounce(AllResource):
     path = 'bounces'
+
+
+class AutopilotConfiguration(RetrievableResource):
+    path = 'autopilot'
+
+
+class AutopilotMembership:
+
+    @classmethod
+    def forEmail(self):
+        return AutopilotMembershipForEmail
+
+    @classmethod
+    def forSms(self):
+        return AutopilotMembershipForSms
+
+    @classmethod
+    def delete(self, **params):
+        try:
+            self._set_client(params)
+            return self.client.request_json('delete', self.path, {}, params)
+        except AttributeError:
+            print('You must first call a platform-specific method (e.g. forEmail())')
+            raise
+
+
+class AutopilotMembershipForEmail(AutopilotMembership, CreateableResource, ListResource):
+    path = 'autopilot/email/memberships'
+
+
+class AutopilotMembershipForSms(AutopilotMembership, CreateableResource, ListResource):
+    path = 'autopilot/sms/memberships'
 
 
 class ListObject:

@@ -212,6 +212,34 @@ metrics = delighted.Metrics.retrieve(
 )
 ```
 
+Managing Autopilot:
+
+```python
+# Get Autopilot configuration for the `email` platform
+autopilot = delighted.AutopilotConfiguration.retrieve('email')
+
+# List people in AutopilotMembership for the `email` platform
+people_autopilot = delighted.AutopilotMembership.forEmail().list(auto_handle_rate_limits=True)
+for person in people_autopilot.auto_paging_iter():
+  # Do something with person
+
+# Add people to AutopilotMembership
+autopilot = delighted.AutopilotMembership.forEmail().create(person_email='test@example.com')
+
+# Add people to AutopilotMembership, with a full set of attributes
+properties = {'customer_id': 123, 'country': 'USA', 'question_product_name': 'The London Trench'}
+autopilot = delighted.AutopilotMembership.forSms().create(person_phone_number='+14155551212', properties=properties)
+
+# Delete by person id
+delighted.AutopilotMembership.forSms().delete(person_id=42)
+
+# Delete by email address
+delighted.AutopilotMembership.forEmail().delete(person_email='test@example.com')
+
+# Delete by phone number (must be E.164 format)
+delighted.AutopilotMembership.forSms().delete(person_phone_number='+14155551212')
+```
+
 ## Rate limits
 
 If a request is rate limited, a `TooManyRequestsError` exception is raised. You can rescue that exception to implement exponential backoff or retry strategies. The exception provides a `retry_after` attribute to tell you how many seconds you should wait before retrying. For example:

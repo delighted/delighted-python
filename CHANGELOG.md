@@ -1,3 +1,13 @@
+## 4.1.0rc1 (Unreleased)
+
+Features:
+
+- Add support for Autopilot API
+
+Compatibility changes:
+
+- Add support for Python 3.9
+
 ## 4.0.0 (2020-03-18)
 
 Features:
