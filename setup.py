@@ -19,7 +19,7 @@ setup(
     long_description_content_type='text/markdown',
     long_description=open('README.md').read(),
     author='Ben Turner, Robby Colvin',
-    author_email='ben@delighted.com',
+    author_email='hello@delighted.com',
     url='https://delighted.com/',
     packages=['delighted'],
     package_dir={'delighted': 'delighted'},
@@ -28,7 +28,7 @@ setup(
     test_requires=['mock', 'pytz', 'tzlocal'],
     license='MIT',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 7 - Inactive',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
