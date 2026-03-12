@@ -1,7 +1,17 @@
 __title__ = 'delighted'
-__version__ = '4.1.0'
+__version__ = '4.2.0'
 __author__ = 'Ben Turner'
 __license__ = 'MIT'
+
+import warnings
+warnings.warn(
+    "Delighted is being sunset on June 30, 2026. This package is deprecated "
+    "and will no longer be maintained or receive updates. For more "
+    "information, visit the Delighted Sunset FAQ: "
+    "https://help.delighted.com/article/840-delighted-sunset-faq",
+    FutureWarning,
+    stacklevel=2,
+)
 
 from delighted.http_adapter import HTTPAdapter  # noqa
 
